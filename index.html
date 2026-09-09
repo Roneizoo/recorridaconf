@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#173c2b">
+  <meta name="description" content="Recorrida operacional offline dos currais do confinamento.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <title>Recorrida do Confinamento</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">RC</span><div><small>GESTÃO · CONFINAMENTO</small><h1>Recorrida do Confinamento</h1></div></div>
+    <div class="top-actions">
+      <span class="position" id="positionLabel">Nenhum relatório importado</span>
+      <button class="btn secondary" id="backupBtn">Salvar cópia</button>
+      <button class="btn secondary" id="restoreBtn">Restaurar cópia</button>
+      <button class="btn primary" id="importBtn">Importar lotes ativos</button>
+    </div>
+    <input id="pdfInput" type="file" accept=".pdf,application/pdf" hidden>
+    <input id="restoreInput" type="file" accept=".json,application/json" hidden>
+  </header>
+
+  <main>
+    <section class="summary" id="summary"></section>
+
+    <section class="filters card">
+      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Mapa dos currais</h2></div><button class="link-btn" id="clearFilters">Limpar filtros</button></div>
+      <div class="filter-grid">
+        <label class="search-wide">Buscar lote, curral ou categoria/dono<input id="searchFilter" type="search" placeholder="Ex.: 165/26, A 01 ou Bahia Rica"></label>
+        <label>Linha<select id="lineFilter"><option value="">Todas</option></select></label>
+        <label>Dieta<select id="dietFilter"><option value="">Todas</option></select></label>
+        <label>Tipo<select id="typeFilter"><option value="">Todos</option><option value="own">Próprio</option><option value="boitel">Boitel</option></select></label>
+        <label>Anotações<select id="noteFilter"><option value="">Todas</option><option value="active">Com anotação ativa</option><option value="none">Sem anotação ativa</option></select></label>
+        <label>Consumo %PV mínimo<input id="consMin" type="text" inputmode="decimal" placeholder="Ex.: 1,8"></label>
+        <label>Consumo %PV máximo<input id="consMax" type="text" inputmode="decimal" placeholder="Ex.: 2,5"></label>
+        <label>Dias conf. mínimo<input id="daysMin" type="number" min="0" step="1" placeholder="Ex.: 10"></label>
+        <label>Dias conf. máximo<input id="daysMax" type="number" min="0" step="1" placeholder="Ex.: 80"></label>
+      </div>
+      <div class="quick-filters"><span>Atalhos:</span><button data-cons="low">Abaixo de 1,8%</button><button data-cons="high">Acima de 2,5%</button><button data-diet="TERMINACAO">Dieta Terminação</button><button data-notes="active">Com anotação</button><button data-days="1-10">1 a 10 dias</button><button data-days="50-80">50 a 80 dias</button></div>
+    </section>
+
+    <section class="result-bar"><strong id="resultCount">0 currais</strong><span id="resultAnimals">0 animais</span></section>
+    <section class="pen-map" id="penMap"><div class="empty">Importe o relatório de Lotes Ativos do Bovino.OS para iniciar a recorrida.</div></section>
+  </main>
+
+  <div class="drawer-backdrop" id="drawer" hidden>
+    <article class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <header class="drawer-head"><div><small>FICHA OPERACIONAL</small><h2 id="detailTitle">Curral</h2></div><button class="close-btn" id="closeDrawer" aria-label="Fechar">×</button></header>
+      <div id="detailBody"></div>
+    </article>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="vendor/pdf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
