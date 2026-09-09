@@ -33,6 +33,33 @@ BUSCA E FILTROS
 Procure lote, curral, linha ou categoria/dono (ex.: "Bahia Rica") e filtre
 por linha, dieta, tipo, anotações, consumo %PV e dias de confinamento.
 
+Ao aplicar um filtro, além do total geral ("X currais · Y animais"),
+aparece um resumo por linha logo abaixo (ex.: "Linha F: 1 curral · 50
+animais", "Linha P: 6 currais · 958 animais"), para saber rapidamente
+onde estão concentrados os lotes filtrados.
+
+SELECIONAR LOTES E EXPORTAR
+Cada card de curral tem uma caixinha de seleção no canto superior
+esquerdo (tocar nela não abre a ficha do curral, só marca/desmarca).
+Fluxo típico:
+1. Aplique um filtro (ex.: atalho "Abaixo de 1,8%" ou consumo até 1,6%).
+2. Toque "Selecionar todos" para marcar todos os lotes filtrados de uma
+   vez, e depois desmarque manualmente os que não quer incluir (ex.:
+   dois lotes que já foram conferidos). "Limpar seleção" desmarca tudo.
+3. Assim que há pelo menos um lote selecionado, aparece uma barra com o
+   total selecionado e dois botões de exportação:
+   - "Exportar lista (imprimir/PDF)": abre a tela de impressão do
+     navegador com uma lista só dos lotes selecionados (linha, curral,
+     lote, categoria/dono, tipo, raça, dieta, animais, consumo %PV,
+     dias de confinamento, peso estimado e saída estimada) — útil para
+     imprimir ou salvar como PDF e entregar para a pessoa do campo
+     conferir os currais fisicamente.
+   - "Exportar CSV": baixa um arquivo .csv com as mesmas colunas, pronto
+     para abrir no Excel e usar na programação de embarque.
+A seleção não se perde ao trocar de filtro (ela é só escondida da tela
+se o lote não aparecer no filtro atual), então dá para selecionar aos
+poucos com filtros diferentes antes de exportar.
+
 OPERANDO EM VÁRIOS TABLETS (SALVAR CÓPIA / RESTAURAR CÓPIA)
 Cada tablet pode fazer sua própria recorrida e suas próprias anotações,
 de forma independente e offline. Para reunir tudo em um só lugar (ex.: no
