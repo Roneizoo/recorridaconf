@@ -110,3 +110,17 @@ Netlify:
 Em ambos os casos, depois de qualquer atualização dos arquivos, os
 tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
+
+HISTÓRICO DE VERSÕES
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v5"),
+junto com a data da atualização. Toda vez que app.js, index.html, styles.css
+ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
+os arquivos antigos guardados no cache.
+
+- v5 (2026-09-10): ficha do curral passou a mostrar "Consumo MS total da
+  baia" (matéria seca, calculado como kg/cab MS × animais). O "Consumo MN
+  total da baia" também foi corrigido: estava rotulado como toneladas, mas
+  o valor do relatório Bovino.OS nessa coluna já vem em kg — agora mostra
+  "kg/dia" corretamente, sem multiplicar nem dividir o número por 1000.
+- v4: correção do cache do app (a versão nova não estava chegando nos
+  tablets depois de atualizar o GitHub).
