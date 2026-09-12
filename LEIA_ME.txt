@@ -14,8 +14,17 @@ que inclui o PASTO). "Animais próprios" aparece como Próprio e qualquer
 outro tipo de entrada aparece como Boitel.
 
 PAINEL SUPERIOR (KPIs)
-Os cartões "Em terminação", "Consumo abaixo de 1,8%" e "Anotações ativas"
+Os cartões "Consumo abaixo de 1,8% (terminação)" e "Anotações ativas"
 podem ser tocados: o toque já aplica o filtro correspondente no mapa.
+O consumo abaixo de 1,8% conta só os lotes em dieta Terminação, porque
+animais em adaptação/crescimento naturalmente comem menos e não é sinal
+de problema real nessa fase.
+
+CABEÇALHO
+Ao lado da data de posição aparece há quantos dias veio essa importação
+(ex.: "há 3 dias"), com destaque em dourado a partir de 1 dia e em
+vermelho a partir de 3 dias, já que o sistema depende de reimportar o
+relatório de Lotes Ativos regularmente.
 
 ATALHOS DE FILTRO
 Além de consumo (abaixo de 1,8% / acima de 2,5%), dieta Terminação e
@@ -32,11 +41,8 @@ ANOTAÇÕES
 BUSCA E FILTROS
 Procure lote, curral, linha ou categoria/dono (ex.: "Bahia Rica") e filtre
 por linha, dieta, tipo, anotações, consumo %PV e dias de confinamento.
-
-Ao aplicar um filtro, além do total geral ("X currais · Y animais"),
-aparece um resumo por linha logo abaixo (ex.: "Linha F: 1 curral · 50
-animais", "Linha P: 6 currais · 958 animais"), para saber rapidamente
-onde estão concentrados os lotes filtrados.
+O mapa de currais abaixo já reflete o filtro aplicado; não há mais um
+resumo de contagem por linha, só o mapa em si.
 
 SELECIONAR LOTES E EXPORTAR
 Cada card de curral tem uma caixinha de seleção no canto superior
@@ -112,11 +118,21 @@ tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
 
 HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v5"),
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v6"),
 junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v6 (2026-09-12): painel simplificado para ficar mais parecido com o
+  Control Conf — os cartões "Em terminação" e "Currais ocupados" saíram,
+  e "Consumo abaixo de 1,8%" agora conta só os lotes em dieta Terminação
+  (ajustando o clique no cartão para já filtrar por Terminação também).
+  A linha "X currais · Y animais" e o resumo por linha embaixo dos
+  filtros também saíram, deixando só o mapa de currais. Selecionar e
+  exportar (PDF/CSV) continuam iguais. No cabeçalho, ao lado da data de
+  posição, agora aparece "há X dias" desde a Data de referência do
+  relatório, com destaque em dourado a partir de 1 dia e vermelho a
+  partir de 3 dias.
 - v5 (2026-09-10): ficha do curral passou a mostrar "Consumo MS total da
   baia" (matéria seca, calculado como kg/cab MS × animais). O "Consumo MN
   total da baia" também foi corrigido: estava rotulado como toneladas, mas
