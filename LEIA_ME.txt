@@ -113,9 +113,8 @@ servidor sempre ligado, e não funcionaria off-line no tablet.
 
 GitHub Pages:
 1. Crie um repositório novo no GitHub e envie esta pasta inteira
-   (index.html, app.js, styles.css, sw.js, manifest.webmanifest, icon.svg,
-   pdf.min.js e pdf.worker.min.js — todos soltos na mesma pasta, sem
-   subpasta).
+   (index.html, app.js, styles.css, sw.js, manifest.webmanifest, icon.svg
+   e a pasta vendor/ com os dois arquivos dela).
 2. Em Settings > Pages, escolha a branch principal e a pasta raiz ("/").
 3. O GitHub gera um link (ex.: https://seuusuario.github.io/repo/).
    Abra esse link no tablet e, se quiser, "Instalar" o app pelo menu do
@@ -133,11 +132,18 @@ tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
 
 HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v8"),
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v9"),
 junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v9 (2026-09-12): correção de um erro da v8 — o caminho do leitor de PDF
+  tinha sido trocado para "pdf.min.js" solto na pasta, mas o site já estava
+  publicado com esses arquivos dentro de uma subpasta vendor/. Como o
+  arquivo não existia no caminho novo, a instalação da v8 falhava
+  silenciosamente e o navegador continuava preso na versão anterior. Voltou
+  a usar vendor/pdf.min.js e vendor/pdf.worker.min.js, que é como esta
+  pasta já estava organizada.
 - v8 (2026-09-12): o Mapa dos Currais foi refeito para ficar igual ao do
   Control Conf — em vez de mostrar só um card por lote ativo, agora mostra
   os 160 currais físicos das linhas A a P, organizados em Setores/Blocos
@@ -147,9 +153,7 @@ os arquivos antigos guardados no cache.
   Espaço perdido) agora usam sempre o total de currais/animais, mesmo com
   filtros de busca aplicados. Novos filtros de Bloco e Situação do curral.
   A ficha do curral ganhou o campo "Saída prevista (120 dias)", além da
-  "Saída estimada (relatório)" que já existia. Os arquivos pdf.min.js e
-  pdf.worker.min.js passaram a ficar soltos na pasta (sem subpasta vendor/),
-  porque é assim que esta pasta de hospedagem já estava organizada.
+  "Saída estimada (relatório)" que já existia.
 - v7 (2026-09-12): a partir do relatório de 12/09/2026, a Bovino.OS tirou a
   coluna "Consumo MN total da baia" do PDF, o que empurrou para a direita
   todas as colunas seguintes (D. conf., D. trato, GMD, pesos e datas de

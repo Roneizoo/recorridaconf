@@ -47,7 +47,7 @@ function parsePage(items,context){
   });return out;
 }
 async function importPdf(file){
-  showToast('Lendo o relatório Bovino.OS...');var pdfjs=window.pdfjsLib;if(!pdfjs)throw new Error('Leitor de PDF indisponível.');pdfjs.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';var doc=await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise,context={line:'',reportDate:'',hasConsumo:true},lots=[];
+  showToast('Lendo o relatório Bovino.OS...');var pdfjs=window.pdfjsLib;if(!pdfjs)throw new Error('Leitor de PDF indisponível.');pdfjs.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';var doc=await pdfjs.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise,context={line:'',reportDate:'',hasConsumo:true},lots=[];
   for(var n=1;n<=doc.numPages;n++){var page=await doc.getPage(n),tc=await page.getTextContent();if(n===1){var header=tc.items.map(function(i){return String(i.str||'').trim();}).join(' ');if(!/Bovino\.OS/i.test(header)||!/Tipo\s+de\s+entrada/i.test(header))throw new Error('Use o relatório Bovino.OS de Lotes Ativos com a coluna Tipo de entrada.');context.hasConsumo=/consum/i.test(header);}lots=lots.concat(parsePage(tc.items,context));}
   if(!lots.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido.');state.lots=lots;state.reportDate=context.reportDate;state.hasConsumo=!!context.hasConsumo;state.importedAt=new Date().toISOString();save();selectedKey='';renderPens();showToast(lots.length+' lotes e '+int(sum(lots,'quantity'))+' animais atualizados. As anotações foram preservadas.');
 }
