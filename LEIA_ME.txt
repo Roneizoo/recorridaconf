@@ -132,11 +132,18 @@ tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
 
 HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v9"),
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v10"),
 junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v10 (2026-09-12): correção visual na legenda do mapa de currais — o item
+  "Vazia" aparecia como um retângulo grande em vez de um pontinho pequeno
+  igual aos outros (Próprio, Boitel, Acima de 160). A causa era um choque de
+  nomes no CSS: o texto "sem resultados/sem anotação" usava a mesma classe
+  "empty" do pontinho e do card de curral vazio, e um deles acabava herdando
+  o espaçamento grande do outro. O placeholder de "sem resultados" agora usa
+  o nome "empty-state", separado do pontinho/card de curral vazio.
 - v9 (2026-09-12): correção de um erro da v8 — o caminho do leitor de PDF
   tinha sido trocado para "pdf.min.js" solto na pasta, mas o site já estava
   publicado com esses arquivos dentro de uma subpasta vendor/. Como o
