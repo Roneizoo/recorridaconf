@@ -112,9 +112,15 @@ Streamlit NÃO serve para este caso: exigiria reescrever tudo e manter um
 servidor sempre ligado, e não funcionaria off-line no tablet.
 
 GitHub Pages:
-1. Crie um repositório novo no GitHub e envie esta pasta inteira
-   (index.html, app.js, styles.css, sw.js, manifest.webmanifest, icon.svg
-   e a pasta vendor/ com os dois arquivos dela).
+1. Crie um repositório novo no GitHub e envie esta pasta inteira, todos os
+   arquivos soltos direto na raiz do repositório (index.html, app.js,
+   styles.css, sw.js, manifest.webmanifest, icon.svg, pdf.min.js e
+   pdf.worker.min.js) — sem colocar nenhum arquivo dentro de subpastas.
+   IMPORTANTE: arrastar uma pasta com subpastas pela tela de upload do
+   próprio site do GitHub não funciona direito (o GitHub costuma ignorar o
+   que está dentro de subpastas); por isso esses dois arquivos maiores do
+   leitor de PDF (pdf.min.js e pdf.worker.min.js) ficam soltos na raiz
+   junto com os outros, e não dentro de uma pasta vendor/.
 2. Em Settings > Pages, escolha a branch principal e a pasta raiz ("/").
 3. O GitHub gera um link (ex.: https://seuusuario.github.io/repo/).
    Abra esse link no tablet e, se quiser, "Instalar" o app pelo menu do
@@ -132,10 +138,19 @@ tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
 
 HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v10"),
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v11"),
 junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
+
+- v11 (2026-09-12): a pasta vendor/ foi removida de vez. Depois de subir a
+  v10 (que ainda usava vendor/pdf.min.js e vendor/pdf.worker.min.js), o
+  site voltou a ficar com a versão antiga, porque o upload pelo site do
+  GitHub não subiu a subpasta vendor/ (o GitHub ignora o conteúdo de
+  subpastas quando os arquivos são arrastados direto na tela de upload).
+  Para não depender de subpasta nenhuma, pdf.min.js e pdf.worker.min.js
+  agora ficam soltos na raiz, junto com os demais arquivos — é mais simples
+  e evita esse problema para sempre.
 
 - v10 (2026-09-12): correção visual na legenda do mapa de currais — o item
   "Vazia" aparecia como um retângulo grande em vez de um pontinho pequeno
