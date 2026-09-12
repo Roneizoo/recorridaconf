@@ -118,11 +118,19 @@ tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
 
 HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v6"),
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v7"),
 junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v7 (2026-09-12): a partir do relatório de 12/09/2026, a Bovino.OS tirou a
+  coluna "Consumo MN total da baia" do PDF, o que empurrou para a direita
+  todas as colunas seguintes (D. conf., D. trato, GMD, pesos e datas de
+  saída) — o app estava lendo o valor errado em cada uma dessas colunas
+  sem avisar. Agora o app reconhece os dois formatos de relatório (com ou
+  sem essa coluna) e ajusta a leitura automaticamente; "Consumo MN total
+  da baia" mostra "não informado neste relatório" quando o PDF não traz
+  mais essa coluna, em vez de mostrar zero.
 - v6 (2026-09-12): painel simplificado para ficar mais parecido com o
   Control Conf — os cartões "Em terminação" e "Currais ocupados" saíram,
   e "Consumo abaixo de 1,8%" agora conta só os lotes em dieta Terminação
