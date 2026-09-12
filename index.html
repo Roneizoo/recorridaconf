@@ -23,35 +23,47 @@
   </header>
 
   <main>
+    <div class="pen-map-intro">
+      <div><small>OCUPAÇÃO FÍSICA</small><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div>
+      <div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div>
+    </div>
+
     <section class="summary" id="summary"></section>
 
     <section class="filters card">
-      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Mapa dos currais</h2></div><button class="link-btn" id="clearFilters">Limpar filtros</button></div>
+      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Buscar e filtrar lotes</h2></div><button class="link-btn" id="clearFilters" type="button">Limpar filtros</button></div>
       <div class="filter-grid">
         <label class="search-wide">Buscar lote, curral ou categoria/dono<input id="searchFilter" type="search" placeholder="Ex.: 165/26, A 01 ou Bahia Rica"></label>
+        <label>Bloco<select id="blockFilter"><option value="">Todos</option></select></label>
         <label>Linha<select id="lineFilter"><option value="">Todas</option></select></label>
-        <label>Dieta<select id="dietFilter"><option value="">Todas</option></select></label>
         <label>Tipo<select id="typeFilter"><option value="">Todos</option><option value="own">Próprio</option><option value="boitel">Boitel</option></select></label>
+        <label>Situação<select id="statusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
+        <label>Dieta<select id="dietFilter"><option value="">Todas</option></select></label>
         <label>Anotações<select id="noteFilter"><option value="">Todas</option><option value="active">Com anotação ativa</option><option value="none">Sem anotação ativa</option></select></label>
         <label>Consumo %PV mínimo<input id="consMin" type="text" inputmode="decimal" placeholder="Ex.: 1,8"></label>
         <label>Consumo %PV máximo<input id="consMax" type="text" inputmode="decimal" placeholder="Ex.: 2,5"></label>
         <label>Dias conf. mínimo<input id="daysMin" type="number" min="0" step="1" placeholder="Ex.: 10"></label>
         <label>Dias conf. máximo<input id="daysMax" type="number" min="0" step="1" placeholder="Ex.: 80"></label>
       </div>
-      <div class="quick-filters"><span>Atalhos:</span><button data-cons="low">Abaixo de 1,8%</button><button data-cons="high">Acima de 2,5%</button><button data-diet="TERMINACAO">Dieta Terminação</button><button data-notes="active">Com anotação</button><button data-days="1-10">1 a 10 dias</button><button data-days="50-80">50 a 80 dias</button></div>
+      <div class="quick-filters"><span>Atalhos:</span><button type="button" data-cons="low">Abaixo de 1,8%</button><button type="button" data-cons="high">Acima de 2,5%</button><button type="button" data-diet="TERMINACAO">Dieta Terminação</button><button type="button" data-notes="active">Com anotação</button><button type="button" data-days="1-10">1 a 10 dias</button><button type="button" data-days="50-80">50 a 80 dias</button></div>
+      <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot own"></i>Próprio</span><span><i class="pen-dot boitel"></i>Boitel</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
     </section>
 
     <section class="result-bar">
-      <div class="selection-actions"><button class="link-btn" id="selectAllFiltered">Selecionar todos</button><button class="link-btn" id="clearSelection">Limpar seleção</button></div>
+      <div class="selection-actions"><button class="link-btn" id="selectAllFiltered" type="button">Selecionar todos</button><button class="link-btn" id="clearSelection" type="button">Limpar seleção</button></div>
     </section>
     <section class="selection-bar" id="selectionBar" hidden>
       <div class="selection-bar-top">
         <strong id="selectionSummary">0 lotes selecionados · 0 animais</strong>
-        <div class="selection-buttons"><button class="btn secondary" id="exportPrintBtn">Exportar lista (imprimir/PDF)</button><button class="btn secondary" id="exportCsvBtn">Exportar CSV</button></div>
+        <div class="selection-buttons"><button class="btn secondary" id="exportPrintBtn" type="button">Exportar lista (imprimir/PDF)</button><button class="btn secondary" id="exportCsvBtn" type="button">Exportar CSV</button></div>
       </div>
       <div class="selection-chips" id="selectionChips"></div>
     </section>
-    <section class="pen-map" id="penMap"><div class="empty">Importe o relatório de Lotes Ativos do Bovino.OS para iniciar a recorrida.</div></section>
+
+    <article class="card">
+      <div id="penBlocks" class="pen-blocks"><div class="empty">Importe o relatório de Lotes Ativos do Bovino.OS para iniciar a recorrida.</div></div>
+    </article>
+    <article class="card pen-capacity-note"><div><strong>Capacidade operacional livre</strong><span>Somente currais totalmente vazios × 160. Exemplo: 10 currais vazios representam 1.600 lugares disponíveis.</span></div><div><strong>Espaço perdido</strong><span>Depois que um curral recebe um lote, todo o restante é considerado perdido para novas entradas, mesmo que ele tenha apenas 80 ou 100 animais.</span></div></article>
   </main>
 
   <div class="drawer-backdrop" id="drawer" hidden>
@@ -62,7 +74,7 @@
   </div>
   <div class="toast" id="toast" role="status"></div>
   <div id="printArea" class="print-area" hidden></div>
-  <script src="vendor/pdf.min.js"></script>
+  <script src="pdf.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

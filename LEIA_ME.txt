@@ -5,20 +5,34 @@ USO DIÁRIO
 2. Toque em "Importar lotes ativos" e escolha o PDF Lotes Ativos do Bovino.OS.
 3. Confira a data de posição, a quantidade de lotes e de animais.
 
-O PDF atualiza lote, curral, animais, linha, dieta, categoria (aparece no
-próprio card, para identificar rapidamente o dono/cliente em lotes Boitel),
-raça, tipo de entrada, datas, dias, pesos, GMD e consumos. Somente os
-currais das linhas A a P entram no mapa; PASTO é ignorado (por isso o total
-de animais do app é menor que o "Animais Ativos" do rodapé do relatório,
-que inclui o PASTO). "Animais próprios" aparece como Próprio e qualquer
-outro tipo de entrada aparece como Boitel.
+O PDF atualiza lote, curral, animais, linha, dieta, categoria (aparece na
+ficha do curral, para identificar rapidamente o dono/cliente em lotes
+Boitel), raça, tipo de entrada, datas, dias, pesos, GMD e consumos. Somente
+os currais das linhas A a P entram no mapa; PASTO é ignorado (por isso o
+total de animais do app é menor que o "Animais Ativos" do rodapé do
+relatório, que inclui o PASTO). "Animais próprios" aparece como Próprio e
+qualquer outro tipo de entrada aparece como Boitel.
+
+MAPA POR SETOR/BLOCO (igual ao Control Conf)
+O mapa mostra os 160 currais físicos das linhas A a P, organizados em três
+Setores/Blocos (editáveis tocando no nome de cada um), com 10 currais por
+linha e 5 currais por vez em cada fileira da tela. Currais vazios também
+aparecem no mapa (com a marca "Livre"), não só os ocupados — isso é o que
+permite calcular corretamente a capacidade e o espaço livre. Um curral com
+mais de um lote mostra cada lote em sua própria linha dentro do card; toque
+em qualquer parte do card para abrir a ficha quando houver só um lote, ou
+toque na linha do lote específico quando houver mais de um.
 
 PAINEL SUPERIOR (KPIs)
-Os cartões "Consumo abaixo de 1,8% (terminação)" e "Anotações ativas"
-podem ser tocados: o toque já aplica o filtro correspondente no mapa.
-O consumo abaixo de 1,8% conta só os lotes em dieta Terminação, porque
-animais em adaptação/crescimento naturalmente comem menos e não é sinal
-de problema real nessa fase.
+"Capacidade física" (160 × total de currais), "Animais alojados",
+"Capacidade operacional livre" (currais totalmente vazios × 160) e "Espaço
+perdido" (lugares perdidos dentro de currais já ocupados) sempre usam o
+total de currais e animais, mesmo com filtros de busca aplicados — só o
+mapa abaixo é que muda com os filtros. Os cartões "Consumo abaixo de 1,8%
+(terminação)" e "Anotações ativas" podem ser tocados: o toque já aplica o
+filtro correspondente no mapa. O consumo abaixo de 1,8% conta só os lotes
+em dieta Terminação, porque animais em adaptação/crescimento naturalmente
+comem menos e não é sinal de problema real nessa fase.
 
 CABEÇALHO
 Ao lado da data de posição aparece há quantos dias veio essa importação
@@ -40,13 +54,13 @@ ANOTAÇÕES
 
 BUSCA E FILTROS
 Procure lote, curral, linha ou categoria/dono (ex.: "Bahia Rica") e filtre
-por linha, dieta, tipo, anotações, consumo %PV e dias de confinamento.
-O mapa de currais abaixo já reflete o filtro aplicado; não há mais um
-resumo de contagem por linha, só o mapa em si.
+por bloco, linha, tipo, situação do curral (vazia, ocupada, com espaço
+perdido, lotada, acima de 160), dieta, anotações, consumo %PV e dias de
+confinamento. O mapa de currais abaixo já reflete o filtro aplicado.
 
 SELECIONAR LOTES E EXPORTAR
-Cada card de curral tem uma caixinha de seleção no canto superior
-esquerdo (tocar nela não abre a ficha do curral, só marca/desmarca).
+Cada lote dentro do card do curral tem uma caixinha de seleção à esquerda
+(tocar nela não abre a ficha do curral, só marca/desmarca).
 Fluxo típico:
 1. Aplique um filtro (ex.: atalho "Abaixo de 1,8%" ou consumo até 1,6%).
 2. Toque "Selecionar todos" para marcar todos os lotes filtrados de uma
@@ -99,8 +113,9 @@ servidor sempre ligado, e não funcionaria off-line no tablet.
 
 GitHub Pages:
 1. Crie um repositório novo no GitHub e envie esta pasta inteira
-   (index.html, app.js, styles.css, sw.js, manifest.webmanifest,
-   icon.svg e a pasta vendor/ com os dois arquivos dela).
+   (index.html, app.js, styles.css, sw.js, manifest.webmanifest, icon.svg,
+   pdf.min.js e pdf.worker.min.js — todos soltos na mesma pasta, sem
+   subpasta).
 2. Em Settings > Pages, escolha a branch principal e a pasta raiz ("/").
 3. O GitHub gera um link (ex.: https://seuusuario.github.io/repo/).
    Abra esse link no tablet e, se quiser, "Instalar" o app pelo menu do
@@ -118,11 +133,23 @@ tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
 
 HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v7"),
+A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v8"),
 junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v8 (2026-09-12): o Mapa dos Currais foi refeito para ficar igual ao do
+  Control Conf — em vez de mostrar só um card por lote ativo, agora mostra
+  os 160 currais físicos das linhas A a P, organizados em Setores/Blocos
+  editáveis (como no Control Conf), com os currais vazios visíveis e cores
+  por situação (vazio, próprio, boitel, acima de 160). Os KPIs de topo
+  (Capacidade física, Animais alojados, Capacidade operacional livre,
+  Espaço perdido) agora usam sempre o total de currais/animais, mesmo com
+  filtros de busca aplicados. Novos filtros de Bloco e Situação do curral.
+  A ficha do curral ganhou o campo "Saída prevista (120 dias)", além da
+  "Saída estimada (relatório)" que já existia. Os arquivos pdf.min.js e
+  pdf.worker.min.js passaram a ficar soltos na pasta (sem subpasta vendor/),
+  porque é assim que esta pasta de hospedagem já estava organizada.
 - v7 (2026-09-12): a partir do relatório de 12/09/2026, a Bovino.OS tirou a
   coluna "Consumo MN total da baia" do PDF, o que empurrou para a direita
   todas as colunas seguintes (D. conf., D. trato, GMD, pesos e datas de
