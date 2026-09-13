@@ -17,9 +17,11 @@
       <button class="btn secondary" id="backupBtn">Salvar cópia</button>
       <button class="btn secondary" id="restoreBtn">Restaurar cópia</button>
       <button class="btn primary" id="importBtn">Importar lotes ativos</button>
+      <button class="btn secondary" id="importShipmentBtn">Importar abate</button>
     </div>
     <input id="pdfInput" type="file" accept=".pdf,application/pdf" hidden>
     <input id="restoreInput" type="file" accept=".json,application/json" hidden>
+    <input id="shipmentInput" type="file" accept=".csv,text/csv" hidden>
   </header>
 
   <main>
@@ -44,10 +46,13 @@
         <label>Consumo %PV máximo<input id="consMax" type="text" inputmode="decimal" placeholder="Ex.: 2,5"></label>
         <label>Dias conf. mínimo<input id="daysMin" type="number" min="0" step="1" placeholder="Ex.: 10"></label>
         <label>Dias conf. máximo<input id="daysMax" type="number" min="0" step="1" placeholder="Ex.: 80"></label>
+        <label>Data de embarque<select id="shipmentDateFilter"><option value="">Todas</option><option value="none">Sem programação</option></select></label>
       </div>
       <div class="quick-filters"><span>Atalhos:</span><button type="button" data-cons="low">Abaixo de 1,8%</button><button type="button" data-cons="high">Acima de 2,5%</button><button type="button" data-diet="TERMINACAO">Dieta Terminação</button><button type="button" data-notes="active">Com anotação</button><button type="button" data-days="1-10">1 a 10 dias</button><button type="button" data-days="50-80">50 a 80 dias</button></div>
       <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot own"></i>Próprio</span><span><i class="pen-dot boitel"></i>Boitel</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
     </section>
+
+    <section class="shipment-schedule" id="shipmentSchedule" hidden></section>
 
     <section class="result-bar">
       <div class="selection-actions"><button class="link-btn" id="selectAllFiltered" type="button">Selecionar todos</button><button class="link-btn" id="clearSelection" type="button">Limpar seleção</button></div>
@@ -55,7 +60,7 @@
     <section class="selection-bar" id="selectionBar" hidden>
       <div class="selection-bar-top">
         <strong id="selectionSummary">0 lotes selecionados · 0 animais</strong>
-        <div class="selection-buttons"><button class="btn secondary" id="exportPrintBtn" type="button">Exportar lista (imprimir/PDF)</button><button class="btn secondary" id="exportCsvBtn" type="button">Exportar CSV</button></div>
+        <div class="selection-buttons"><button class="btn primary" id="exportShipmentBtn" type="button">Planilha de abate</button><button class="btn secondary" id="exportPrintBtn" type="button">Exportar lista (imprimir/PDF)</button><button class="btn secondary" id="exportCsvBtn" type="button">Exportar CSV</button></div>
       </div>
       <div class="selection-chips" id="selectionChips"></div>
     </section>

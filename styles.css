@@ -65,6 +65,29 @@
 .pen-lot-name{font-size:.76rem;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pen-lot-meta{font-size:.68rem;color:#56675d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pen-owner{font-size:.66rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+
+/* Programação de abate — mesmo recurso do Control Conf */
+.shipment-schedule{display:flex;align-items:center;gap:18px;padding:15px 20px;border:1px solid #b8d2c0;border-radius:15px;background:#f3f8f4;overflow:auto;margin-bottom:16px}
+.shipment-schedule[hidden]{display:none}
+.shipment-title{display:grid;gap:2px;min-width:190px}
+.shipment-schedule span,.shipment-schedule small{color:var(--muted);font-size:.76rem}
+.shipment-days{display:flex;gap:9px}
+.shipment-days button{min-width:142px;border:1px solid #b8d2c0;background:#fff;border-radius:11px;padding:9px 11px;text-align:left;color:var(--ink);cursor:pointer;font:inherit}
+.shipment-days button:hover,.shipment-days button:focus{border-color:#2f8a55;background:#ebf7ee;outline:0}
+.shipment-days button strong,.shipment-days button span,.shipment-days button small{display:block}
+.shipment-days button strong{font-size:.88rem}
+.shipment-days button span{font-weight:800;color:#286a42}
+.shipment-days button small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.pen-card.scheduled{background:#e5f5e9;border-color:#56a06e;box-shadow:inset 0 0 0 1px rgba(47,138,85,.12)}
+.pen-card.scheduled.own,.pen-card.scheduled.boitel{border-left-color:#2f8a55}
+.pen-lot-row.scheduled{background:#d8efdf}
+.shipment-badge{display:inline-block;margin-top:3px;padding:3px 6px;border-radius:6px;background:#2f8a55;color:#fff;font-size:.62rem;font-weight:900;line-height:1.25}
+.shipment-detail{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 16px;padding:13px 15px;border:1px solid #75ad86;border-left:6px solid #2f8a55;border-radius:11px;background:#e8f6ec;color:#205b37}
+.shipment-detail strong{display:block}
+.shipment-detail span{display:block;font-size:.82rem;margin-top:3px}
+.shipment-delete{flex:0 0 auto;border:1px solid #75ad86;background:#fff;color:#205b37;width:28px;height:28px;border-radius:8px;font-size:1rem;font-weight:900;line-height:1;cursor:pointer}
+.shipment-delete:hover{background:#fbe9e7;border-color:#d99a92;color:var(--red)}
+@media(max-width:650px){.shipment-schedule{align-items:flex-start;flex-direction:column}.shipment-title{min-width:0}.shipment-days{width:100%;overflow:auto}}
 .pen-capacity-note{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;background:#f7f9f7}
 .pen-capacity-note div{display:grid;gap:3px}
 .pen-capacity-note strong{font-size:.85rem}

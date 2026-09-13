@@ -143,6 +143,19 @@ junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v13 (2026-09-13): adicionada a Programação de Abate no Mapa dos Currais,
+  igual ao Control Conf. No topo, o botão "Importar abate" lê uma planilha
+  CSV com as datas de embarque programadas; os currais programados
+  aparecem em verde no mapa, e cada lote programado mostra um selo
+  "Embarque DD/MM/AAAA · X animais". Um painel logo abaixo dos filtros
+  lista as datas programadas com o total de animais e os currais de cada
+  uma — tocar numa data filtra o mapa só por aqueles currais. Na ficha do
+  curral, a programação aparece destacada em verde no topo, com um botão
+  para excluí-la (o lote volta ao normal). Para gerar a planilha,
+  selecione os lotes no mapa (as mesmas caixinhas usadas para exportar
+  lista/CSV) e toque em "Planilha de abate", que aparece junto dos outros
+  botões de exportação. A planilha usa o mesmo formato do Control Conf, e
+  pode ser preenchida e reimportada em qualquer um dos dois aplicativos.
 - v12 (2026-09-13): Mapa dos Currais alinhado com as mesmas melhorias feitas
   no Control Conf. A busca e os filtros (dieta, anotação, consumo, dias)
   agora escondem por completo os currais que não têm nenhum lote
