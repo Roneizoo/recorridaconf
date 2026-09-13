@@ -143,6 +143,16 @@ junto com a data da atualização. Toda vez que app.js, index.html, styles.css
 ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
 os arquivos antigos guardados no cache.
 
+- v12 (2026-09-13): Mapa dos Currais alinhado com as mesmas melhorias feitas
+  no Control Conf. A busca e os filtros (dieta, anotação, consumo, dias)
+  agora escondem por completo os currais que não têm nenhum lote
+  correspondente, em vez de deixar o card do curral aparecer vazio com a
+  lista de lotes filtrada por dentro. O card do curral passou a mostrar a
+  categoria/dono do lote (o mesmo texto que já aparecia na ficha, útil para
+  identificar de relance o cliente de um lote Boitel). As cores de Próprio
+  (agora vinho) e Boitel (agora azul mais forte) mudaram para ficar iguais
+  às do Control Conf, sem mexer nas cores dos cartões de KPI do topo, que
+  continuam como estavam.
 - v11 (2026-09-12): a pasta vendor/ foi removida de vez. Depois de subir a
   v10 (que ainda usava vendor/pdf.min.js e vendor/pdf.worker.min.js), o
   site voltou a ficar com a versão antiga, porque o upload pelo site do
