@@ -5,40 +5,37 @@ USO DIÁRIO
 2. Toque em "Importar lotes ativos" e escolha o PDF Lotes Ativos do Bovino.OS.
 3. Confira a data de posição, a quantidade de lotes e de animais.
 
-O PDF atualiza lote, curral, animais, linha, dieta, categoria (aparece na
-ficha do curral, para identificar rapidamente o dono/cliente em lotes
-Boitel), raça, tipo de entrada, datas, dias, pesos, GMD e consumos. Somente
+O PDF atualiza lote, curral, animais, linha, dieta, categoria, proprietário
+(aparece no próprio card, para identificar rapidamente o dono/cliente),
+raça, tipo de entrada, datas, dias, pesos, GMD e consumos (MS e MN). Somente
 os currais das linhas A a P entram no mapa; PASTO é ignorado (por isso o
 total de animais do app é menor que o "Animais Ativos" do rodapé do
-relatório, que inclui o PASTO). "Animais próprios" aparece como Próprio e
-qualquer outro tipo de entrada aparece como Boitel.
+relatório, que inclui o PASTO). O tipo de entrada aparece como Próprio
+(Animais próprios), Boitel ou Parceria.
 
-MAPA POR SETOR/BLOCO (igual ao Control Conf)
-O mapa mostra os 160 currais físicos das linhas A a P, organizados em três
-Setores/Blocos (editáveis tocando no nome de cada um), com 10 currais por
-linha e 5 currais por vez em cada fileira da tela. Currais vazios também
-aparecem no mapa (com a marca "Livre"), não só os ocupados — isso é o que
-permite calcular corretamente a capacidade e o espaço livre. Um curral com
-mais de um lote mostra cada lote em sua própria linha dentro do card; toque
-em qualquer parte do card para abrir a ficha quando houver só um lote, ou
-toque na linha do lote específico quando houver mais de um.
+IMPORTANTE — MODELO DO RELATÓRIO (Bovino.OS v1.2.186, a partir de 16/09/2026)
+A Bovino.OS mudou o layout do relatório: agora existe uma coluna própria de
+"Proprietário", separada da "Categoria" (antes o nome do cliente vinha
+dentro da Categoria). O app já foi atualizado para esse novo modelo e
+testado contra um relatório real de 12 páginas, batendo exatamente com os
+16 "Subtotal LINHA X" do próprio relatório. Se algum dia a Bovino.OS mudar
+o layout de novo, os números do rodapé (Subtotal por linha) são a forma
+mais rápida de conferir se o app ainda está lendo certo — se não baterem,
+me avise com o PDF novo que eu ajusto.
+
+Um problema do próprio relatório (não do app): a coluna "Data Entrada"
+está vindo cortada para a maioria dos lotes (ex.: "22/06/2..." em vez de
+"22/06/2026") porque a coluna ficou estreita demais depois que a
+Bovino.OS adicionou a coluna Proprietário. O app mostra o que dá para ler
+(dia/mês) com um aviso, em vez de inventar o ano. Isso NÃO afeta os "Dias
+de confinamento" (que vêm prontos do relatório, não são calculados a
+partir da data) nem a "Data de saída estimada" (essa não vem cortada).
+Se quiser esse campo certo de novo, vale reportar para o suporte da
+Bovino.OS que a coluna de data de entrada está sendo cortada no PDF.
 
 PAINEL SUPERIOR (KPIs)
-"Capacidade física" (160 × total de currais), "Animais alojados",
-"Capacidade operacional livre" (currais totalmente vazios × 160) e "Espaço
-perdido" (lugares perdidos dentro de currais já ocupados) sempre usam o
-total de currais e animais, mesmo com filtros de busca aplicados — só o
-mapa abaixo é que muda com os filtros. Os cartões "Consumo abaixo de 1,8%
-(terminação)" e "Anotações ativas" podem ser tocados: o toque já aplica o
-filtro correspondente no mapa. O consumo abaixo de 1,8% conta só os lotes
-em dieta Terminação, porque animais em adaptação/crescimento naturalmente
-comem menos e não é sinal de problema real nessa fase.
-
-CABEÇALHO
-Ao lado da data de posição aparece há quantos dias veio essa importação
-(ex.: "há 3 dias"), com destaque em dourado a partir de 1 dia e em
-vermelho a partir de 3 dias, já que o sistema depende de reimportar o
-relatório de Lotes Ativos regularmente.
+Os cartões "Em terminação", "Consumo abaixo de 1,8%" e "Anotações ativas"
+podem ser tocados: o toque já aplica o filtro correspondente no mapa.
 
 ATALHOS DE FILTRO
 Além de consumo (abaixo de 1,8% / acima de 2,5%), dieta Terminação e
@@ -54,31 +51,7 @@ ANOTAÇÕES
 
 BUSCA E FILTROS
 Procure lote, curral, linha ou categoria/dono (ex.: "Bahia Rica") e filtre
-por bloco, linha, tipo, situação do curral (vazia, ocupada, com espaço
-perdido, lotada, acima de 160), dieta, anotações, consumo %PV e dias de
-confinamento. O mapa de currais abaixo já reflete o filtro aplicado.
-
-SELECIONAR LOTES E EXPORTAR
-Cada lote dentro do card do curral tem uma caixinha de seleção à esquerda
-(tocar nela não abre a ficha do curral, só marca/desmarca).
-Fluxo típico:
-1. Aplique um filtro (ex.: atalho "Abaixo de 1,8%" ou consumo até 1,6%).
-2. Toque "Selecionar todos" para marcar todos os lotes filtrados de uma
-   vez, e depois desmarque manualmente os que não quer incluir (ex.:
-   dois lotes que já foram conferidos). "Limpar seleção" desmarca tudo.
-3. Assim que há pelo menos um lote selecionado, aparece uma barra com o
-   total selecionado e dois botões de exportação:
-   - "Exportar lista (imprimir/PDF)": abre a tela de impressão do
-     navegador com uma lista só dos lotes selecionados (linha, curral,
-     lote, categoria/dono, tipo, raça, dieta, animais, consumo %PV,
-     dias de confinamento, peso estimado e saída estimada) — útil para
-     imprimir ou salvar como PDF e entregar para a pessoa do campo
-     conferir os currais fisicamente.
-   - "Exportar CSV": baixa um arquivo .csv com as mesmas colunas, pronto
-     para abrir no Excel e usar na programação de embarque.
-A seleção não se perde ao trocar de filtro (ela é só escondida da tela
-se o lote não aparecer no filtro atual), então dá para selecionar aos
-poucos com filtros diferentes antes de exportar.
+por linha, dieta, tipo, anotações, consumo %PV e dias de confinamento.
 
 OPERANDO EM VÁRIOS TABLETS (SALVAR CÓPIA / RESTAURAR CÓPIA)
 Cada tablet pode fazer sua própria recorrida e suas próprias anotações,
@@ -112,15 +85,9 @@ Streamlit NÃO serve para este caso: exigiria reescrever tudo e manter um
 servidor sempre ligado, e não funcionaria off-line no tablet.
 
 GitHub Pages:
-1. Crie um repositório novo no GitHub e envie esta pasta inteira, todos os
-   arquivos soltos direto na raiz do repositório (index.html, app.js,
-   styles.css, sw.js, manifest.webmanifest, icon.svg, pdf.min.js e
-   pdf.worker.min.js) — sem colocar nenhum arquivo dentro de subpastas.
-   IMPORTANTE: arrastar uma pasta com subpastas pela tela de upload do
-   próprio site do GitHub não funciona direito (o GitHub costuma ignorar o
-   que está dentro de subpastas); por isso esses dois arquivos maiores do
-   leitor de PDF (pdf.min.js e pdf.worker.min.js) ficam soltos na raiz
-   junto com os outros, e não dentro de uma pasta vendor/.
+1. Crie um repositório novo no GitHub e envie esta pasta inteira
+   (index.html, app.js, styles.css, sw.js, manifest.webmanifest,
+   icon.svg e a pasta vendor/ com os dois arquivos dela).
 2. Em Settings > Pages, escolha a branch principal e a pasta raiz ("/").
 3. O GitHub gera um link (ex.: https://seuusuario.github.io/repo/).
    Abra esse link no tablet e, se quiser, "Instalar" o app pelo menu do
@@ -136,91 +103,3 @@ Netlify:
 Em ambos os casos, depois de qualquer atualização dos arquivos, os
 tablets que já instalaram o app podem levar alguns segundos a minutos
 para buscar a versão nova em segundo plano (o app avisa quando reabrir).
-
-HISTÓRICO DE VERSÕES
-A versão do cache fica sempre na 1ª linha de sw.js (ex.: "recorrida-conf-v11"),
-junto com a data da atualização. Toda vez que app.js, index.html, styles.css
-ou sw.js mudam, essa versão precisa subir, senão os tablets continuam usando
-os arquivos antigos guardados no cache.
-
-- v13 (2026-09-13): adicionada a Programação de Abate no Mapa dos Currais,
-  igual ao Control Conf. No topo, o botão "Importar abate" lê uma planilha
-  CSV com as datas de embarque programadas; os currais programados
-  aparecem em verde no mapa, e cada lote programado mostra um selo
-  "Embarque DD/MM/AAAA · X animais". Um painel logo abaixo dos filtros
-  lista as datas programadas com o total de animais e os currais de cada
-  uma — tocar numa data filtra o mapa só por aqueles currais. Na ficha do
-  curral, a programação aparece destacada em verde no topo, com um botão
-  para excluí-la (o lote volta ao normal). Para gerar a planilha,
-  selecione os lotes no mapa (as mesmas caixinhas usadas para exportar
-  lista/CSV) e toque em "Planilha de abate", que aparece junto dos outros
-  botões de exportação. A planilha usa o mesmo formato do Control Conf, e
-  pode ser preenchida e reimportada em qualquer um dos dois aplicativos.
-- v12 (2026-09-13): Mapa dos Currais alinhado com as mesmas melhorias feitas
-  no Control Conf. A busca e os filtros (dieta, anotação, consumo, dias)
-  agora escondem por completo os currais que não têm nenhum lote
-  correspondente, em vez de deixar o card do curral aparecer vazio com a
-  lista de lotes filtrada por dentro. O card do curral passou a mostrar a
-  categoria/dono do lote (o mesmo texto que já aparecia na ficha, útil para
-  identificar de relance o cliente de um lote Boitel). As cores de Próprio
-  (agora vinho) e Boitel (agora azul mais forte) mudaram para ficar iguais
-  às do Control Conf, sem mexer nas cores dos cartões de KPI do topo, que
-  continuam como estavam.
-- v11 (2026-09-12): a pasta vendor/ foi removida de vez. Depois de subir a
-  v10 (que ainda usava vendor/pdf.min.js e vendor/pdf.worker.min.js), o
-  site voltou a ficar com a versão antiga, porque o upload pelo site do
-  GitHub não subiu a subpasta vendor/ (o GitHub ignora o conteúdo de
-  subpastas quando os arquivos são arrastados direto na tela de upload).
-  Para não depender de subpasta nenhuma, pdf.min.js e pdf.worker.min.js
-  agora ficam soltos na raiz, junto com os demais arquivos — é mais simples
-  e evita esse problema para sempre.
-
-- v10 (2026-09-12): correção visual na legenda do mapa de currais — o item
-  "Vazia" aparecia como um retângulo grande em vez de um pontinho pequeno
-  igual aos outros (Próprio, Boitel, Acima de 160). A causa era um choque de
-  nomes no CSS: o texto "sem resultados/sem anotação" usava a mesma classe
-  "empty" do pontinho e do card de curral vazio, e um deles acabava herdando
-  o espaçamento grande do outro. O placeholder de "sem resultados" agora usa
-  o nome "empty-state", separado do pontinho/card de curral vazio.
-- v9 (2026-09-12): correção de um erro da v8 — o caminho do leitor de PDF
-  tinha sido trocado para "pdf.min.js" solto na pasta, mas o site já estava
-  publicado com esses arquivos dentro de uma subpasta vendor/. Como o
-  arquivo não existia no caminho novo, a instalação da v8 falhava
-  silenciosamente e o navegador continuava preso na versão anterior. Voltou
-  a usar vendor/pdf.min.js e vendor/pdf.worker.min.js, que é como esta
-  pasta já estava organizada.
-- v8 (2026-09-12): o Mapa dos Currais foi refeito para ficar igual ao do
-  Control Conf — em vez de mostrar só um card por lote ativo, agora mostra
-  os 160 currais físicos das linhas A a P, organizados em Setores/Blocos
-  editáveis (como no Control Conf), com os currais vazios visíveis e cores
-  por situação (vazio, próprio, boitel, acima de 160). Os KPIs de topo
-  (Capacidade física, Animais alojados, Capacidade operacional livre,
-  Espaço perdido) agora usam sempre o total de currais/animais, mesmo com
-  filtros de busca aplicados. Novos filtros de Bloco e Situação do curral.
-  A ficha do curral ganhou o campo "Saída prevista (120 dias)", além da
-  "Saída estimada (relatório)" que já existia.
-- v7 (2026-09-12): a partir do relatório de 12/09/2026, a Bovino.OS tirou a
-  coluna "Consumo MN total da baia" do PDF, o que empurrou para a direita
-  todas as colunas seguintes (D. conf., D. trato, GMD, pesos e datas de
-  saída) — o app estava lendo o valor errado em cada uma dessas colunas
-  sem avisar. Agora o app reconhece os dois formatos de relatório (com ou
-  sem essa coluna) e ajusta a leitura automaticamente; "Consumo MN total
-  da baia" mostra "não informado neste relatório" quando o PDF não traz
-  mais essa coluna, em vez de mostrar zero.
-- v6 (2026-09-12): painel simplificado para ficar mais parecido com o
-  Control Conf — os cartões "Em terminação" e "Currais ocupados" saíram,
-  e "Consumo abaixo de 1,8%" agora conta só os lotes em dieta Terminação
-  (ajustando o clique no cartão para já filtrar por Terminação também).
-  A linha "X currais · Y animais" e o resumo por linha embaixo dos
-  filtros também saíram, deixando só o mapa de currais. Selecionar e
-  exportar (PDF/CSV) continuam iguais. No cabeçalho, ao lado da data de
-  posição, agora aparece "há X dias" desde a Data de referência do
-  relatório, com destaque em dourado a partir de 1 dia e vermelho a
-  partir de 3 dias.
-- v5 (2026-09-10): ficha do curral passou a mostrar "Consumo MS total da
-  baia" (matéria seca, calculado como kg/cab MS × animais). O "Consumo MN
-  total da baia" também foi corrigido: estava rotulado como toneladas, mas
-  o valor do relatório Bovino.OS nessa coluna já vem em kg — agora mostra
-  "kg/dia" corretamente, sem multiplicar nem dividir o número por 1000.
-- v4: correção do cache do app (a versão nova não estava chegando nos
-  tablets depois de atualizar o GitHub).
