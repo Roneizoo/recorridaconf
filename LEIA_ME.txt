@@ -81,7 +81,7 @@ servidor sempre ligado, e não funcionaria off-line no tablet.
 GitHub Pages:
 1. Crie um repositório novo no GitHub e envie esta pasta inteira, com
    todos os arquivos soltos na raiz (index.html, app.js, styles.css,
-   sw.js, manifest.webmanifest, icon.svg, xlsx.full.min.js)
+   sw.js, manifest.webmanifest, icon.svg, xlsx.mini.min.js)
    — sem subpasta, porque o upload web do GitHub não sobe subpastas
    (como vendor/) de forma confiável.
 2. Em Settings > Pages, escolha a branch principal e a pasta raiz ("/").
