@@ -2,36 +2,30 @@ RECORRIDA DO CONFINAMENTO
 
 USO DIÁRIO
 1. Abra index.html no tablet ou computador.
-2. Toque em "Importar lotes ativos" e escolha o PDF Lotes Ativos do Bovino.OS.
+2. Toque em "Importar lotes ativos" e escolha a planilha Excel (.xlsx) de
+   Lotes Ativos exportada do Bovino.OS.
 3. Confira a data de posição, a quantidade de lotes e de animais.
 
-O PDF atualiza lote, curral, animais, linha, dieta, categoria, proprietário
-(aparece no próprio card, para identificar rapidamente o dono/cliente),
-raça, tipo de entrada, datas, dias, pesos, GMD e consumos (MS e MN). Somente
-os currais das linhas A a P entram no mapa; PASTO é ignorado (por isso o
-total de animais do app é menor que o "Animais Ativos" do rodapé do
-relatório, que inclui o PASTO). O tipo de entrada aparece como Próprio
-(Animais próprios), Boitel ou Parceria.
+A planilha atualiza lote, curral, animais, linha, dieta, categoria,
+proprietário (aparece no próprio card, para identificar rapidamente o
+dono/cliente), raça, tipo de entrada, datas, dias, pesos, GMD e consumos
+(MS e MN). Somente os currais das linhas A a P entram no mapa; PASTO é
+ignorado (por isso o total de animais do app é menor que o total de
+"Animais Ativos" da planilha, que inclui o PASTO). O tipo de entrada
+aparece como Próprio (Animais próprios/Compra), Boitel ou Parceria.
 
-IMPORTANTE — MODELO DO RELATÓRIO (Bovino.OS v1.2.186, a partir de 16/09/2026)
-A Bovino.OS mudou o layout do relatório: agora existe uma coluna própria de
-"Proprietário", separada da "Categoria" (antes o nome do cliente vinha
-dentro da Categoria). O app já foi atualizado para esse novo modelo e
-testado contra um relatório real de 12 páginas, batendo exatamente com os
-16 "Subtotal LINHA X" do próprio relatório. Se algum dia a Bovino.OS mudar
-o layout de novo, os números do rodapé (Subtotal por linha) são a forma
-mais rápida de conferir se o app ainda está lendo certo — se não baterem,
-me avise com o PDF novo que eu ajusto.
-
-Um problema do próprio relatório (não do app): a coluna "Data Entrada"
-está vindo cortada para a maioria dos lotes (ex.: "22/06/2..." em vez de
-"22/06/2026") porque a coluna ficou estreita demais depois que a
-Bovino.OS adicionou a coluna Proprietário. O app mostra o que dá para ler
-(dia/mês) com um aviso, em vez de inventar o ano. Isso NÃO afeta os "Dias
-de confinamento" (que vêm prontos do relatório, não são calculados a
-partir da data) nem a "Data de saída estimada" (essa não vem cortada).
-Se quiser esse campo certo de novo, vale reportar para o suporte da
-Bovino.OS que a coluna de data de entrada está sendo cortada no PDF.
+IMPORTANTE — IMPORTAÇÃO POR EXCEL, NÃO MAIS POR PDF (a partir de 18/09/2026)
+O app agora importa a planilha Excel de Lotes Ativos, em vez do PDF. A
+leitura é pelo NOME de cada coluna (Linha, Lote, Curral, Cab., Categoria,
+Tipo de entrada, Proprietário, etc.) — não pela posição do texto na página
+como era com o PDF. Isso quer dizer que, se a Bovino.OS mudar a ordem das
+colunas ou o layout visual do relatório de novo, a importação continua
+funcionando normalmente, desde que os nomes das colunas usadas não mudem.
+Se algum nome de coluna mudar, o app avisa que uma coluna essencial (Linha
+ou Lote) não foi encontrada — nesse caso, me avise com a planilha nova que
+eu ajusto. Como a data de entrada agora vem de uma célula de data de
+verdade na planilha (e não de texto extraído do PDF), o problema antigo de
+data cortada ("22/06/2..." sem o ano) não existe mais.
 
 PAINEL SUPERIOR (KPIs)
 Os cartões "Em terminação", "Consumo abaixo de 1,8%" e "Anotações ativas"
@@ -66,7 +60,7 @@ computador central):
    arquivos dos outros tablets, um de cada vez.
 3. Restaurar agora MESCLA em vez de substituir: as anotações de todos os
    arquivos importados são combinadas (sem duplicar, sem apagar nada), e
-   a posição dos lotes (o resultado da última importação de PDF) fica
+   a posição dos lotes (o resultado da última importação da planilha) fica
    sempre a mais recente entre o aparelho atual e o arquivo importado,
    comparando pela data/hora de importação.
 4. Depois de reunir tudo, vale salvar uma cópia consolidada no
@@ -85,9 +79,11 @@ Streamlit NÃO serve para este caso: exigiria reescrever tudo e manter um
 servidor sempre ligado, e não funcionaria off-line no tablet.
 
 GitHub Pages:
-1. Crie um repositório novo no GitHub e envie esta pasta inteira
-   (index.html, app.js, styles.css, sw.js, manifest.webmanifest,
-   icon.svg e a pasta vendor/ com os dois arquivos dela).
+1. Crie um repositório novo no GitHub e envie esta pasta inteira, com
+   todos os arquivos soltos na raiz (index.html, app.js, styles.css,
+   sw.js, manifest.webmanifest, icon.svg, xlsx.full.min.js)
+   — sem subpasta, porque o upload web do GitHub não sobe subpastas
+   (como vendor/) de forma confiável.
 2. Em Settings > Pages, escolha a branch principal e a pasta raiz ("/").
 3. O GitHub gera um link (ex.: https://seuusuario.github.io/repo/).
    Abra esse link no tablet e, se quiser, "Instalar" o app pelo menu do
