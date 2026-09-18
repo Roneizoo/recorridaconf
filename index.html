@@ -16,32 +16,46 @@
       <span class="position" id="positionLabel">Nenhum relatório importado</span>
       <button class="btn secondary" id="backupBtn">Salvar cópia</button>
       <button class="btn secondary" id="restoreBtn">Restaurar cópia</button>
+      <button class="btn secondary" id="importShipmentBtn">Importar programação de abate</button>
       <button class="btn primary" id="importBtn">Importar lotes ativos</button>
     </div>
     <input id="excelInput" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
     <input id="restoreInput" type="file" accept=".json,application/json" hidden>
+    <input id="shipmentInput" type="file" accept=".csv,text/csv" hidden>
   </header>
 
   <main>
     <section class="summary" id="summary"></section>
 
     <section class="filters card">
-      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Mapa dos currais</h2></div><button class="link-btn" id="clearFilters">Limpar filtros</button></div>
+      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Mapa dos currais</h2></div><div class="filter-title-actions"><div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div><button class="link-btn" id="clearFilters">Limpar filtros</button></div></div>
       <div class="filter-grid">
         <label class="search-wide">Buscar lote, curral ou categoria/dono<input id="searchFilter" type="search" placeholder="Ex.: 165/26, A 01 ou Bahia Rica"></label>
+        <label>Bloco<select id="blockFilter"><option value="">Todos</option></select></label>
         <label>Linha<select id="lineFilter"><option value="">Todas</option></select></label>
-        <label>Dieta<select id="dietFilter"><option value="">Todas</option></select></label>
         <label>Tipo<select id="typeFilter"><option value="">Todos</option><option value="own">Próprio</option><option value="boitel">Boitel</option><option value="partnership">Parceria</option></select></label>
+        <label>Situação<select id="statusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
+        <label>Dieta<select id="dietFilter"><option value="">Todas</option></select></label>
         <label>Anotações<select id="noteFilter"><option value="">Todas</option><option value="active">Com anotação ativa</option><option value="none">Sem anotação ativa</option></select></label>
         <label>Consumo %PV mínimo<input id="consMin" type="text" inputmode="decimal" placeholder="Ex.: 1,8"></label>
         <label>Consumo %PV máximo<input id="consMax" type="text" inputmode="decimal" placeholder="Ex.: 2,5"></label>
         <label>Dias conf. mínimo<input id="daysMin" type="number" min="0" step="1" placeholder="Ex.: 10"></label>
         <label>Dias conf. máximo<input id="daysMax" type="number" min="0" step="1" placeholder="Ex.: 80"></label>
+        <label>Data de embarque<select id="shipmentDateFilter"><option value="">Todas</option><option value="none">Sem programação</option></select></label>
       </div>
       <div class="quick-filters"><span>Atalhos:</span><button data-cons="low">Abaixo de 1,8%</button><button data-cons="high">Acima de 2,5%</button><button data-diet="TERMINACAO">Dieta Terminação</button><button data-notes="active">Com anotação</button><button data-days="1-10">1 a 10 dias</button><button data-days="50-80">50 a 80 dias</button></div>
+      <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot own"></i>Próprio</span><span><i class="pen-dot boitel"></i>Boitel</span><span><i class="pen-dot partnership"></i>Parceria</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
     </section>
 
-    <section class="result-bar"><strong id="resultCount">0 currais</strong><span id="resultAnimals">0 animais</span></section>
+    <section class="shipment-schedule" id="shipmentSchedule"></section>
+    <section class="result-bar"><strong id="resultCount">0 currais</strong><span id="resultAnimals">0 animais</span><div class="selection-actions"><button class="link-btn" id="penSelectAllFiltered" type="button">Selecionar todos</button><button class="link-btn" id="penClearSelection" type="button">Limpar seleção</button></div></section>
+    <section class="selection-bar" id="penSelectionBar" hidden>
+      <div class="selection-bar-top">
+        <strong id="penSelectionSummary">0 lotes selecionados · 0 animais</strong>
+        <div class="selection-buttons"><button class="btn primary" id="penExportShipmentBtn" type="button">Planilha de abate</button><button class="btn secondary" id="penExportPrintBtn" type="button">Exportar lista (imprimir/PDF)</button><button class="btn secondary" id="penExportCsvBtn" type="button">Exportar CSV</button></div>
+      </div>
+      <div class="selection-chips" id="penSelectionChips"></div>
+    </section>
     <section class="pen-map" id="penMap"><div class="empty">Importe o relatório de Lotes Ativos do Bovino.OS para iniciar a recorrida.</div></section>
   </main>
 
@@ -52,6 +66,7 @@
     </article>
   </div>
   <div class="toast" id="toast" role="status"></div>
+  <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js"></script>
   <script src="app.js"></script>
 </body>

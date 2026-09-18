@@ -27,9 +27,27 @@ eu ajusto. Como a data de entrada agora vem de uma célula de data de
 verdade na planilha (e não de texto extraído do PDF), o problema antigo de
 data cortada ("22/06/2..." sem o ano) não existe mais.
 
+MAPA DOS CURRAIS — SETORES, SELEÇÃO E EXPORTAÇÃO
+O mapa agora é organizado em Setores (Bloco 01 = linhas A–F, Bloco 02 =
+G–K, Bloco 03 = L–P; o nome de cada setor pode ser editado tocando nele) e
+mostra também os currais vazios ("Livre"), com barra de ocupação e status
+("Curral lotado", "X lugares perdidos", "Capacidade ultrapassada").
+Cada lote tem uma caixa de seleção. Com um ou mais lotes selecionados,
+aparece uma barra com "Planilha de abate" (gera um CSV para preencher a
+data de embarque, que pode ser reimportado aqui ou no Control Conf),
+"Exportar lista (imprimir/PDF)" e "Exportar CSV". "Selecionar todos" e
+"Limpar seleção" ficam ao lado da contagem de currais.
+"Importar programação de abate" lê de volta o CSV preenchido (o mesmo
+formato usado pelo Control Conf) e passa a mostrar "Embarque programado"
+no lote e na faixa "Embarques programados" acima do mapa.
+Os filtros Bloco, Situação (vazias/ocupadas/lotadas/acima de 160) e Data
+de embarque ajudam a localizar currais específicos.
+
 PAINEL SUPERIOR (KPIs)
-Os cartões "Em terminação", "Consumo abaixo de 1,8%" e "Anotações ativas"
-podem ser tocados: o toque já aplica o filtro correspondente no mapa.
+Os cartões "Em terminação", "Consumo abaixo de 1,8% (terminação)" e
+"Anotações ativas" podem ser tocados: o toque já aplica o filtro
+correspondente no mapa. O consumo abaixo de 1,8% conta somente animais
+com dieta Terminação, para não misturar com lotes em adaptação/crescimento.
 
 ATALHOS DE FILTRO
 Além de consumo (abaixo de 1,8% / acima de 2,5%), dieta Terminação e
