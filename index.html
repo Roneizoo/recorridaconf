@@ -17,18 +17,20 @@
       <button class="btn secondary" id="backupBtn">Salvar cópia</button>
       <button class="btn secondary" id="restoreBtn">Restaurar cópia</button>
       <button class="btn secondary" id="importShipmentBtn">Importar programação de abate</button>
+      <button class="btn secondary" id="importHistoryBtn">Importar histórico sanitário</button>
       <button class="btn primary" id="importBtn">Importar lotes ativos</button>
     </div>
     <input id="excelInput" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
     <input id="restoreInput" type="file" accept=".json,application/json" hidden>
     <input id="shipmentInput" type="file" accept=".csv,text/csv" hidden>
+    <input id="historyInput" type="file" accept=".xlsb,.xlsx,.xls,application/vnd.ms-excel.sheet.binary.macroEnabled.12,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
   </header>
 
   <main>
     <section class="summary" id="summary"></section>
 
     <section class="filters card">
-      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Mapa dos currais</h2></div><div class="filter-title-actions"><button class="btn primary" id="toggleFiltersBtn" type="button">Mostrar filtros</button><button class="btn secondary" id="sanidadeModeBtn" type="button">Modo Sanidade (mapa de risco)</button><button class="btn secondary" id="compactModeBtn" type="button">Grade compacta</button><button class="btn secondary" id="printGridBtn" type="button">Imprimir grade (1 página)</button><button class="btn secondary" id="sanidadeExportBtn" type="button">Exportar sanidade (CSV)</button><button class="btn secondary" id="toggleRecentBtn" type="button">Mostrar últimas ocorrências</button><span class="pen-standard-mini">Capacidade padrão: <strong>160</strong> animais/curral</span><button class="link-btn" id="clearFilters">Limpar filtros</button></div></div>
+      <div class="filter-title"><div><small>LOCALIZAR</small><h2>Mapa dos currais</h2></div><div class="filter-title-actions"><button class="btn primary" id="toggleFiltersBtn" type="button">Mostrar filtros</button><button class="btn secondary" id="sanidadeModeBtn" type="button">Modo Sanidade (mapa de risco)</button><button class="btn secondary" id="compactModeBtn" type="button">Grade compacta</button><button class="btn secondary" id="printGridBtn" type="button">Imprimir grade (1 página)</button><button class="btn secondary" id="sanidadeExportBtn" type="button">Exportar sanidade (CSV)</button><button class="btn secondary" id="toggleReportBtn" type="button">Mostrar relatório de causas</button><button class="btn secondary" id="toggleRecentBtn" type="button">Mostrar últimas ocorrências</button><span class="pen-standard-mini">Capacidade padrão: <strong>160</strong> animais/curral</span><button class="link-btn" id="clearFilters">Limpar filtros</button></div></div>
       <div class="filter-body" id="filterBody" hidden>
         <div class="filter-grid">
           <label class="search-wide">Buscar lote, curral ou categoria/dono<input id="searchFilter" type="search" placeholder="Ex.: 165/26, A 01 ou Bahia Rica"></label>
@@ -54,6 +56,7 @@
 
     <section class="shipment-schedule" id="shipmentSchedule"></section>
     <section class="sanidade-recent" id="sanidadeRecent" hidden></section>
+    <section class="sanidade-report-section" id="sanidadeReport" hidden></section>
     <section class="result-bar"><strong id="resultCount">0 currais</strong><span id="resultAnimals">0 animais</span><div class="selection-actions"><button class="link-btn" id="penSelectAllFiltered" type="button">Selecionar todos</button><button class="link-btn" id="penClearSelection" type="button">Limpar seleção</button></div></section>
     <section class="selection-bar" id="penSelectionBar" hidden>
       <div class="selection-bar-top">
