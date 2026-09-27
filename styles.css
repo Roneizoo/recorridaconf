@@ -144,10 +144,9 @@ main { max-width: 1560px; margin: auto; padding: 24px; }
 .pen-card.over { border-top: 6px solid var(--red); background: #fffaf9; }
 .pen-card.empty { background: #f9fbf9; border: 1px dashed #b5c7bd; color: #84978b; }
 .pen-card.risk-alto { border-top: 6px solid var(--risk-alto); background: #f8d7da; border-color: #f5c6cb; }
-.pen-card.risk-risco { border-top: 6px solid var(--risk-risco); background: #ffe8cc; border-color: #ffd8a8; }
-.pen-card.risk-medio { border-top: 6px solid var(--risk-medio); background: #fff3cd; border-color: #ffeeba; }
+.pen-card.risk-risco { border-top: 6px solid var(--risk-risco); background: #ffe0b2; border-color: #ffb74d; } /* Laranja mais forte e destacado */
+.pen-card.risk-medio { border-top: 6px solid var(--risk-medio); background: #fff9c4; border-color: #fff176; } /* Amarelo mais claro e vibrante */
 .pen-card.risk-baixo { border-top: 6px solid var(--risk-baixo); background: #d4edda; border-color: #c3e6cb; }
-
 .pen-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
 .pen-code { font-size: 1.2rem; font-weight: 900; color: var(--green); }
 .pen-round-toggle { font-size: .65rem; font-weight: 800; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; cursor: pointer; }
