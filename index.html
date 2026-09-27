@@ -75,6 +75,19 @@
     </article>
   </div>
   <div class="toast" id="toast" role="status"></div>
+  <div class="modal-backdrop" id="xlsbHelp" hidden>
+    <article class="modal-panel">
+      <header class="modal-head"><h2>Esse arquivo .xlsb não abriu direto</h2><button class="close-btn" id="closeXlsbHelp" aria-label="Fechar">×</button></header>
+      <p>Planilhas com tabelas dinâmicas complexas às vezes travam a leitura do .xlsb no navegador. É rápido resolver — converta pra .xlsx uma vez e importe de novo:</p>
+      <ol class="modal-steps">
+        <li>Abra o arquivo no Excel, no computador.</li>
+        <li>Clique em <strong>Arquivo → Salvar como</strong>.</li>
+        <li>Em "Tipo", escolha <strong>Pasta de Trabalho do Excel (*.xlsx)</strong> e salve.</li>
+        <li>Volte aqui, clique em <strong>"Importar histórico sanitário"</strong> de novo e escolha esse novo arquivo .xlsx.</li>
+      </ol>
+      <div class="modal-actions"><button class="btn secondary" id="copyXlsbHelp" type="button">Copiar instruções</button><button class="btn primary" id="closeXlsbHelp2" type="button">Entendi</button></div>
+    </article>
+  </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js"></script>
   <script src="app.js"></script>

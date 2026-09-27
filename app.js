@@ -130,7 +130,7 @@ async function importSanidadeHistory(file){
   try{
     wb=XLSXLib.read(new Uint8Array(await file.arrayBuffer()),{type:'array',cellDates:true,cellFormula:false,bookVBA:false});
   }catch(readErr){
-    throw new Error('Não consegui ler esse arquivo diretamente (planilhas com tabelas dinâmicas complexas às vezes travam a leitura do .xlsb). Abra no Excel, use "Salvar como" → Excel (.xlsx) e importe o .xlsx aqui — os dados são os mesmos.');
+    var err=new Error('Não consegui ler esse arquivo diretamente (planilhas com tabelas dinâmicas complexas às vezes travam a leitura do .xlsb).');err.needsXlsxConversion=true;throw err;
   }
   var mortesName=findSheetName(wb,'BD Mortes'),medsName=findSheetName(wb,'BD Medicações')||findSheetName(wb,'BD Medicacoes');
   if(!mortesName&&!medsName)throw new Error('Não encontrei as abas "BD Mortes" ou "BD Medicações" nessa planilha.');
@@ -324,23 +324,30 @@ function renderSanidadeSection(l){
     '<div class="sanidade-history">'+(entries.length?entries.map(sanidadeEntryCard).join(''):'<div class="empty-state">Nenhuma ocorrência registrada para este lote.</div>')+'</div></div>';
 }
 function renderSanidadeRecent(){var box=el('sanidadeRecent');if(!box)return;var recent=state.sanidadeLog.slice().sort(function(a,b){return b.createdAt.localeCompare(a.createdAt);}).slice(0,8);if(!recent.length){box.innerHTML='';return;}box.innerHTML='<div class="shipment-title"><strong>Últimas ocorrências de sanidade</strong><span>Toque para abrir o lote.</span></div><div class="shipment-days">'+recent.map(function(o){var kind=o.kind||'ocorrencia',label=kind==='obito'?('Óbito · '+sanidadeCauseLabel(o.causeCode)):esc(o.categories.map(sanidadeCategoryLabel).join(', '));return '<button type="button" data-sanidade-recent="'+esc(o.lotKey)+'"><strong>'+esc(o.pen)+' · '+esc(o.lotName)+'</strong><span>'+label+'</span><small>'+dateBr(o.date)+'</small></button>';}).join('')+'</div>';}
+function isNoAnimalId(tag){var n=norm(tag);if(!n)return true;var markers=['SIN BOTON','S N','SN','SEM BRINCO','SEM NUMERO','SEM NUMERO DE ANIMAL','DESCONHECIDO','SEM ID','SEM IDENTIFICACAO'];return markers.indexOf(n)>=0;}
+function sanidadeCaseKey(o){var real=o.animalTag&&!isNoAnimalId(o.animalTag);return real?(o.lotKey+'|'+norm(o.animalTag)):null;}
+function sanidadeDistinctCaseCount(entries){var seen={},cases=0;entries.forEach(function(o){var key=sanidadeCaseKey(o);if(key){if(!seen[key]){seen[key]=true;cases++;}}else{cases++;}});return cases;}
 function sanidadeReportGroup(entries,keyFn,labelFn){
   var map={};
   entries.forEach(function(o){
+    var caseKey=sanidadeCaseKey(o);
     (keyFn(o)||[]).forEach(function(k){
       if(!k)return;
-      if(!map[k])map[k]={label:labelFn(k),count:0,pens:{},types:{own:0,boitel:0,partnership:0}};
-      map[k].count++;map[k].pens[o.pen]=(map[k].pens[o.pen]||0)+1;
+      if(!map[k])map[k]={label:labelFn(k),count:0,cases:0,seen:{},pens:{},types:{own:0,boitel:0,partnership:0}};
+      map[k].count++;
+      if(caseKey){if(!map[k].seen[caseKey]){map[k].seen[caseKey]=true;map[k].cases++;}}else{map[k].cases++;}
+      map[k].pens[o.pen]=(map[k].pens[o.pen]||0)+1;
       var l=state.lots.find(function(x){return lotKey(x)===o.lotKey;});
       if(l)map[k].types[l.type]=(map[k].types[l.type]||0)+1;
     });
   });
-  return Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return b.count-a.count;});
+  return Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return b.cases-a.cases;});
 }
 function sanidadeReportRowHtml(g,total){
   var pens=Object.keys(g.pens).sort(function(a,b){return g.pens[b]-g.pens[a];}).slice(0,4).map(function(p){return p+' ('+g.pens[p]+')';}).join(', ');
   var typesParts=[];if(g.types.own)typesParts.push('Próprio: '+g.types.own);if(g.types.boitel)typesParts.push('Boitel: '+g.types.boitel);if(g.types.partnership)typesParts.push('Parceria: '+g.types.partnership);
-  return '<div class="sanidade-report-row"><strong>'+esc(g.label)+'</strong><span>'+g.count+' ('+decimal(total?g.count/total*100:0,1)+'%)</span><small>Currais: '+esc(pens||'—')+'</small>'+(typesParts.length?'<small>'+esc(typesParts.join(' · '))+'</small>':'')+'</div>';
+  var countNote=g.count!==g.cases?' · '+g.count+' lançamento'+(g.count===1?'':'s')+' no total (mesmo animal tratado mais de uma vez)':'';
+  return '<div class="sanidade-report-row"><strong>'+esc(g.label)+'</strong><span>'+g.cases+' caso'+(g.cases===1?'':'s')+' ('+decimal(total?g.cases/total*100:0,1)+'%)</span><small>Currais: '+esc(pens||'—')+countNote+'</small>'+(typesParts.length?'<small>'+esc(typesParts.join(' · '))+'</small>':'')+'</div>';
 }
 function renderSanidadeReport(){
   var box=el('sanidadeReport');if(!box)return;
@@ -348,8 +355,10 @@ function renderSanidadeReport(){
   if(!log.length){box.innerHTML='<div class="empty-state">Nenhum registro de sanidade ainda — o relatório aparece aqui conforme forem lançadas ocorrências e óbitos.</div>';return;}
   var obitoGroups=sanidadeReportGroup(obitos,function(o){return [o.causeCode];},sanidadeCauseLabel);
   var ocorrGroups=sanidadeReportGroup(ocorr,function(o){return o.categories;},sanidadeCategoryLabel);
-  box.innerHTML='<h3>Causas de óbito ('+obitos.length+')</h3>'+(obitoGroups.length?obitoGroups.map(function(g){return sanidadeReportRowHtml(g,obitos.length);}).join(''):'<div class="empty-state">Nenhum óbito registrado.</div>')+
-    '<h3>Ocorrências / sintomas ('+ocorr.length+')</h3>'+(ocorrGroups.length?ocorrGroups.map(function(g){return sanidadeReportRowHtml(g,ocorr.length);}).join(''):'<div class="empty-state">Nenhuma ocorrência registrada.</div>');
+  var obitoCases=sanidadeDistinctCaseCount(obitos),ocorrCases=sanidadeDistinctCaseCount(ocorr);
+  var ocorrNote=ocorrCases!==ocorr.length?' · '+ocorr.length+' lançamentos no total':'';
+  box.innerHTML='<h3>Causas de óbito ('+obitoCases+' caso'+(obitoCases===1?'':'s')+')</h3>'+(obitoGroups.length?obitoGroups.map(function(g){return sanidadeReportRowHtml(g,obitoCases);}).join(''):'<div class="empty-state">Nenhum óbito registrado.</div>')+
+    '<h3>Ocorrências / sintomas ('+ocorrCases+' caso'+(ocorrCases===1?'':'s')+esc(ocorrNote)+')</h3><p class="sanidade-report-hint">Um mesmo animal tratado várias vezes conta como 1 caso — a contagem de lançamentos aparece à parte.</p>'+(ocorrGroups.length?ocorrGroups.map(function(g){return sanidadeReportRowHtml(g,ocorrCases);}).join(''):'<div class="empty-state">Nenhuma ocorrência registrada.</div>');
 }
 function exportSanidadeCsv(){
   var rows=state.sanidadeLog.slice().sort(function(a,b){return (a.date+a.createdAt).localeCompare(b.date+b.createdAt);});
@@ -429,7 +438,7 @@ function bind(){
   el('importShipmentBtn').onclick=function(){el('shipmentInput').click();};
   el('shipmentInput').onchange=importShipmentPlan;
   el('importHistoryBtn').onclick=function(){el('historyInput').click();};
-  el('historyInput').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;try{await importSanidadeHistory(f);}catch(e){console.error(e);showToast(e.message||'Não foi possível importar o histórico sanitário.');}finally{this.value='';}};
+  el('historyInput').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;try{await importSanidadeHistory(f);}catch(e){console.error(e);if(e.needsXlsxConversion){el('xlsbHelp').hidden=false;}else{showToast(e.message||'Não foi possível importar o histórico sanitário.');}}finally{this.value='';}};
   ['searchFilter','blockFilter','lineFilter','dietFilter','typeFilter','statusFilter','noteFilter','sanidadeFilter','consMin','consMax','daysMin','daysMax','shipmentDateFilter'].forEach(function(id){el(id).addEventListener(id==='searchFilter'||id.indexOf('cons')===0||id.indexOf('days')===0?'input':'change',render);});
   el('riskFilter').onchange=function(){var v=this.value,ranges={alto:[0,7],risco:[8,30],medio:[31,60],baixo:[61,'']};if(!v){el('daysMin').value='';el('daysMax').value='';}else{el('daysMin').value=ranges[v][0];el('daysMax').value=ranges[v][1];}render();};
   el('clearFilters').onclick=clearFilters;
@@ -458,10 +467,18 @@ function bind(){
     var cb=e.target.closest('[data-pen-select]');if(!cb)return;if(cb.checked)penSelected.add(cb.dataset.penSelect);else penSelected.delete(cb.dataset.penSelect);updatePenSelectionBar();
   });
   el('closeDrawer').onclick=function(){el('drawer').hidden=true;};
+  el('closeXlsbHelp').onclick=function(){el('xlsbHelp').hidden=true;};
+  el('closeXlsbHelp2').onclick=function(){el('xlsbHelp').hidden=true;};
+  el('xlsbHelp').onclick=function(e){if(e.target===this)this.hidden=true;};
+  el('copyXlsbHelp').onclick=function(){
+    var text='Esse arquivo .xlsb não abre direto no Recorrida — é rápido resolver:\n1. Abra o arquivo no Excel, no computador.\n2. Clique em Arquivo → Salvar como.\n3. Em "Tipo", escolha Pasta de Trabalho do Excel (*.xlsx) e salve.\n4. No Recorrida, clique em "Importar histórico sanitário" de novo e escolha esse novo arquivo .xlsx.';
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){showToast('Instruções copiadas.');}).catch(function(){showToast('Não foi possível copiar. Copie manualmente o texto na tela.');});}
+    else{showToast('Não foi possível copiar. Copie manualmente o texto na tela.');}
+  };
   el('drawer').onclick=function(e){if(e.target===this)this.hidden=true;};
   el('detailBody').onclick=function(e){var b=e.target.closest('[data-close-note]');if(b)conclude(b.dataset.closeNote);var d=e.target.closest('[data-delete-shipment]');if(d)deleteShipmentPlan(d.dataset.deleteShipment);var s=e.target.closest('[data-delete-sanidade]');if(s)deleteSanidadeOccurrence(s.dataset.deleteSanidade);var ac=e.target.closest('[data-add-sanidade-cat]');if(ac)addSanidadeCategory();var am=e.target.closest('[data-add-sanidade-med]');if(am)addSanidadeMed();var acs=e.target.closest('[data-add-sanidade-cause]');if(acs)addSanidadeCause();};
   window.addEventListener('afterprint',function(){document.body.classList.remove('print-pens');});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')el('drawer').hidden=true;});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){el('drawer').hidden=true;el('xlsbHelp').hidden=true;}});
 }
 document.addEventListener('DOMContentLoaded',function(){bind();render();if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('./sw.js').catch(function(){});});
 })();
