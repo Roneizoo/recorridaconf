@@ -149,7 +149,19 @@ async function importExcel(file){
   if(headerKeys.indexOf('LINHA')<0||headerKeys.indexOf('LOTE')<0)throw new Error('Use a planilha de Lotes Ativos exportada pelo Bovino.OS, com as colunas Linha e Lote.');
   var parsed=parseExcelRows(rows);
   if(!parsed.lots.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido na planilha.');
-  state.lots=parsed.lots;state.reportDate=parsed.reportDate;state.importedAt=new Date().toISOString();save();selectedKey='';render();
+  state.lots=parsed.lots;state.reportDate=parsed.reportDate;state.importedAt=new Date().toISOString();
+  
+  // Auto-fechar anotações de lotes abatidos ou currais vazios
+  var activeLots = new Set(state.lots.map(lotKey));
+  var activePens = new Set(state.lots.map(function(l){return l.pen;}));
+  state.notes.forEach(function(n){
+    if(n.status === 'active' && ((n.scope === 'lot' && !activeLots.has(n.targetKey)) || (n.scope === 'pen' && !activePens.has(n.targetKey)))) {
+      n.status = 'closed';
+      n.closedAt = new Date().toISOString();
+    }
+  });
+
+  save();selectedKey='';render();
   showToast(parsed.lots.length+' lotes e '+int(sum(parsed.lots,'quantity'))+' animais atualizados. As anotações foram preservadas.');
 }
 function ensureXlsxFull(){
