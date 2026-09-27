@@ -298,8 +298,9 @@ function sanidadeEntryCard(o){
   return '<div class="sanidade-entry"><div><small>'+dateBr(o.date)+(o.med?' · '+esc(sanidadeMedLabel(o.med)):'')+animalTxt+'</small><div class="sanidade-entry-cats">'+o.categories.map(function(c){return '<span>'+esc(sanidadeCategoryLabel(c))+'</span>';}).join('')+'</div>'+(o.note?'<p class="sanidade-entry-note">'+esc(o.note)+'</p>':'')+'</div><button type="button" data-delete-sanidade="'+esc(o.id)+'" title="Excluir ocorrência" aria-label="Excluir ocorrência">×</button></div>';
 }
 function renderSanidadeSection(l){
-  var entries=sanidadeForLot(l),counts={};entries.forEach(function(o){(o.categories||[]).forEach(function(c){counts[c]=(counts[c]||0)+1;});});
-  var countsHtml=Object.keys(counts).length?Object.keys(counts).map(function(c){return '<span class="sanidade-count-chip">'+esc(sanidadeCategoryLabel(c))+' · '+counts[c]+'</span>';}).join(''):'';
+  var entries=sanidadeForLot(l),counts={},seen={};
+  entries.forEach(function(o){var caseKey=sanidadeCaseKey(o);(o.categories||[]).forEach(function(c){if(!counts[c])counts[c]={cases:0,total:0};counts[c].total++;var seenKey=c+'|'+caseKey;if(caseKey){if(!seen[seenKey]){seen[seenKey]=true;counts[c].cases++;}}else{counts[c].cases++;}});});
+  var countsHtml=Object.keys(counts).length?Object.keys(counts).map(function(c){var g=counts[c];return '<span class="sanidade-count-chip"'+(g.total!==g.cases?' title="'+g.total+' lançamentos no total (mesmo animal tratado mais de uma vez)"':'')+'>'+esc(sanidadeCategoryLabel(c))+' · '+g.cases+(g.total!==g.cases?'*':'')+'</span>';}).join(''):'';
   var obitosCount=entries.filter(function(o){return (o.kind||'ocorrencia')==='obito';}).length;
   if(obitosCount)countsHtml='<span class="sanidade-count-chip obito">Óbitos registrados · '+obitosCount+'</span>'+countsHtml;
   var deaths=Number(l.deaths)||0,deathsHtml=deaths>0?'<p class="sanidade-deaths-alert">'+deaths+' morte'+(deaths===1?'':'s')+' registrada'+(deaths===1?'':'s')+' para este lote no relatório do Bovino.OS.</p>':'';
