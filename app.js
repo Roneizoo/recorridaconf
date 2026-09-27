@@ -286,8 +286,9 @@ function renderPenMapCompact(rows){
       var cells=[];
       for(var n=1;n<=10;n++){
         var num=pad2(n),key=line+num,pen=map[key]||{line:line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}};
-        var status=penStatus(pen),contentMatch=!filtersActive||pen.quantity>0,statusMatch=!statusSel||status===statusSel;
-        cells.push(contentMatch&&statusMatch?penCompactCell(pen):'<div class="compact-cell compact-hidden"></div>');
+        var noteF=el('noteFilter').value, q=norm(el('searchFilter').value);
+        var hasPenNote=state.notes.some(function(x){return x.status==='active'&&x.scope==='pen'&&x.targetKey===key;});
+        var status=penStatus(pen),contentMatch=!filtersActive||pen.quantity>0||(noteF==='active'&&hasPenNote)||(q&&key.indexOf(q)>=0),statusMatch=!statusSel||status===statusSel;       cells.push(contentMatch&&statusMatch?penCompactCell(pen):'<div class="compact-cell compact-hidden"></div>');
       }
       return '<div class="compact-line"><span class="compact-line-label">'+line+'</span><div class="compact-row">'+cells.join('')+'</div></div>';
     }).join('');
@@ -304,7 +305,9 @@ function renderPenMap(rows){
       var pens=[];
       for(var n=1;n<=10;n++){
         var num=pad2(n),key=line+num,pen=map[key]||{line:line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}};
-        var status=penStatus(pen),contentMatch=!filtersActive||pen.quantity>0,statusMatch=!statusSel||status===statusSel;
+        var noteF=el('noteFilter').value, q=norm(el('searchFilter').value);
+        var hasPenNote=state.notes.some(function(x){return x.status==='active'&&x.scope==='pen'&&x.targetKey===key;});
+        var status=penStatus(pen),contentMatch=!filtersActive||pen.quantity>0||(noteF==='active'&&hasPenNote)||(q&&key.indexOf(q)>=0),statusMatch=!statusSel||status===statusSel;
         if(contentMatch&&statusMatch)pens.push(pen);
       }
       if(!pens.length)return '';
