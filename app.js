@@ -37,7 +37,6 @@ async function load(){
     });
   } catch(e) { console.error('IndexedDB load error', e); }
 
-  // Migração automática de dados antigos (LocalStorage -> IndexedDB)
   if(!d) {
     try {
       var ls = localStorage.getItem(KEY);
@@ -58,9 +57,21 @@ function save(){
   getDB().then(function(db) {
     db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).put(state, KEY);
   }).catch(function(e) {
-    // Fallback de segurança
     localStorage.setItem(KEY,JSON.stringify(state));
   });
+}
+
+function cleanupGhostNotes(){
+  if(!state || !state.notes || !state.lots) return;
+  var activeLots={}, activePens={};
+  state.lots.forEach(function(l){ activeLots[lotKey(l)]=true; activePens[l.pen]=true; });
+  var healed=false;
+  state.notes.forEach(function(n){
+    if(n.status==='active' && ((n.scope==='lot' && !activeLots[n.targetKey]) || (n.scope==='pen' && !activePens[n.targetKey]))) {
+      n.status='closed'; n.closedAt=new Date().toISOString(); healed=true;
+    }
+  });
+  if(healed){ save(); }
 }
 
 function markUnsaved(){hasUnsavedChanges=true;var b=el('backupBtn');if(b)b.classList.add('needs-backup');}
@@ -151,16 +162,8 @@ async function importExcel(file){
   if(!parsed.lots.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido na planilha.');
   state.lots=parsed.lots;state.reportDate=parsed.reportDate;state.importedAt=new Date().toISOString();
   
-  // Auto-fechar anotações de lotes abatidos ou currais vazios
-  var activeLots = new Set(state.lots.map(lotKey));
-  var activePens = new Set(state.lots.map(function(l){return l.pen;}));
-  state.notes.forEach(function(n){
-    if(n.status === 'active' && ((n.scope === 'lot' && !activeLots.has(n.targetKey)) || (n.scope === 'pen' && !activePens.has(n.targetKey)))) {
-      n.status = 'closed';
-      n.closedAt = new Date().toISOString();
-    }
-  });
-
+  cleanupGhostNotes();
+  
   save();selectedKey='';render();
   showToast(parsed.lots.length+' lotes e '+int(sum(parsed.lots,'quantity'))+' animais atualizados. As anotações foram preservadas.');
 }
@@ -246,13 +249,16 @@ function kpi(label,value,sub,cls,action){var tag=action?'button':'div';return '<
 function kpiProgress(label,value,sub,pct,cls){return '<div class="kpi"><span>'+label+'</span><strong>'+value+'</strong><div class="kpi-progress"><div class="kpi-bar '+(cls||'')+'" style="width:'+Math.min(100,pct)+'%"></div></div><small>'+sub+'</small></div>';}
 function filtered(){var q=norm(el('searchFilter').value),line=el('lineFilter').value,diet=el('dietFilter').value,type=el('typeFilter').value,note=el('noteFilter').value,sanidadeF=el('sanidadeFilter').value,deathsF=el('deathsFilter').value,min=inputNumber(el('consMin').value),max=inputNumber(el('consMax').value),daysMin=inputNumber(el('daysMin').value),daysMax=inputNumber(el('daysMax').value),shipmentDate=el('shipmentDateFilter').value,sanidadeSet={};state.sanidadeLog.forEach(function(o){sanidadeSet[o.lotKey]=true;});return state.lots.filter(function(l){var notes=activeNotes(l).length,search=!q||norm(l.name+' '+l.pen+' '+l.line+' '+l.category+' '+l.proprietario).indexOf(q)>=0,shipment=shipmentFor(l),hasSanidade=!!sanidadeSet[lotKey(l)],hasDeaths=Number(l.deaths)>0;return search&&(!line||l.line===line)&&(!diet||norm(l.diet)===diet)&&(!type||l.type===type)&&(!note||(note==='active'?notes>0:notes===0))&&(!sanidadeF||(sanidadeF==='com'?hasSanidade:!hasSanidade))&&(!deathsF||(deathsF==='com'?hasDeaths:!hasDeaths))&&(min===null||l.pv>=min)&&(max===null||l.pv<=max)&&(daysMin===null||l.days>=daysMin)&&(daysMax===null||l.days<=daysMax)&&(!shipmentDate||(shipmentDate==='none'?!shipment:!!shipment&&shipment.shipmentDate===shipmentDate));});}
 function fillFilters(){var line=el('lineFilter').value,diet=el('dietFilter').value,block=el('blockFilter').value,shipmentDate=el('shipmentDateFilter').value,lines=Array.from(new Set(state.lots.map(function(l){return l.line;}))).filter(Boolean).sort(),diets=Array.from(new Set(state.lots.map(function(l){return norm(l.diet);}))).filter(Boolean).sort(),shipDates=Array.from(new Set((state.shipmentPlans||[]).map(function(p){return p.shipmentDate;}))).filter(Boolean).sort();el('lineFilter').innerHTML='<option value="">Todas</option>'+lines.map(function(x){return '<option value="'+x+'">Linha '+x+'</option>';}).join('');el('dietFilter').innerHTML='<option value="">Todas</option>'+diets.map(function(x){return '<option value="'+esc(x)+'">'+esc(x)+'</option>';}).join('');el('blockFilter').innerHTML='<option value="">Todos</option>'+state.penBlocks.map(function(b){return '<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>';}).join('');el('shipmentDateFilter').innerHTML='<option value="">Todas</option><option value="none">Sem programação</option>'+shipDates.map(function(d){return '<option value="'+d+'">'+dateBr(d)+'</option>';}).join('');el('lineFilter').value=line;el('dietFilter').value=diet;el('blockFilter').value=block;el('shipmentDateFilter').value=shipmentDate;}
+
 function render(){fillFilters();var rows=filtered(),term=state.lots.filter(function(l){return norm(l.diet)==='TERMINACAO';}),termLow=term.filter(function(l){return l.pv<1.8;}),notes=state.notes.filter(function(n){return n.status==='active';}),lotsWithDeaths=state.lots.filter(function(l){return Number(l.deaths)>0;});el('positionLabel').textContent=state.reportDate?'Posição em '+dateBr(state.reportDate)+' · atualizado '+new Date(state.importedAt).toLocaleString('pt-BR'):'Nenhum relatório importado';
+  var fullMap=buildPenMap(state.lots),allPens=[];
   state.penBlocks.forEach(function(block){block.lines.forEach(function(line){for(var n=1;n<=10;n++){var num=pad2(n),key=line+num;allPens.push(fullMap[key]||{line:line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}});}});});
   var occupied=allPens.filter(function(p){return p.quantity>0;}),empty=allPens.length-occupied.length,animalsHoused=sum(occupied,'quantity'),internal=sum(occupied,function(p){return Math.max(0,CAPACITY_PEN-p.quantity);}),plannedVacant=occupied.filter(function(p){return p.lots.length&&p.lots.every(function(l){var s=shipmentFor(l);return s&&Number(s.quantity)>=Number(l.quantity);});});
   var totalCap = allPens.length * CAPACITY_PEN;
   var occPct = totalCap > 0 ? (animalsHoused / totalCap * 100) : 0;
   el('summary').innerHTML=kpiProgress('Ocupação Física',int(animalsHoused)+' cab.',occupied.length+' currais ocupados',occPct,'wine')+kpi('Capacidade livre',int(empty*CAPACITY_PEN),empty+' currais vazios × '+CAPACITY_PEN,'gold')+kpi('Vagas após embarques',int((empty+plannedVacant.length)*CAPACITY_PEN),plannedVacant.length+' currais com saída total programada','green')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue')+kpi('Consumo < 1,8% (term.)',int(sum(termLow,'quantity')),'animais em terminação para observar','red','cons-low')+kpi('Mortes',int(sum(state.lots,'deaths')),lotsWithDeaths.length+' lote'+(lotsWithDeaths.length===1?'':'s')+' com registro','red','deaths')+kpi('Anotações ativas',int(notes.length),'acompanhamentos pendentes','blue','notes-active');
   el('resultCount').textContent=rows.length+' '+(rows.length===1?'curral':'currais');el('resultAnimals').textContent=int(sum(rows,'quantity'))+' animais';renderPenLegend();renderShipmentSchedule();renderSanidadeRecent();renderSanidadeReport();renderPenMap(rows);updatePenSelectionBar();}
+
 function penNumber(l){var m=String(l.pen||'').match(/(\d{1,2})\s*$/);return m?m[1].padStart(2,'0'):'';}
 function hasActiveFilters(){return !!(el('searchFilter').value.trim()||el('dietFilter').value||el('typeFilter').value||el('noteFilter').value||el('sanidadeFilter').value||el('deathsFilter').value||el('consMin').value.trim()||el('consMax').value.trim()||el('daysMin').value.trim()||el('daysMax').value.trim()||el('shipmentDateFilter').value);}
 function buildPenMap(rows){var map={};rows.forEach(function(l){var num=penNumber(l);if(!num)return;var key=l.line+num;if(!map[key])map[key]={line:l.line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}};map[key].lots.push(l);map[key].quantity+=Number(l.quantity)||0;map[key].types[l.type]=(map[key].types[l.type]||0)+(Number(l.quantity)||0);});return map;}
@@ -560,6 +566,7 @@ function bind(){
 }
 document.addEventListener('DOMContentLoaded', async function(){
   state = await load();
+  cleanupGhostNotes();
   bind();
   render();
   if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('./sw.js').catch(function(){});
