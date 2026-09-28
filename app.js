@@ -161,9 +161,7 @@ async function importExcel(file){
   var parsed=parseExcelRows(rows);
   if(!parsed.lots.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido na planilha.');
   state.lots=parsed.lots;state.reportDate=parsed.reportDate;state.importedAt=new Date().toISOString();
-  
   cleanupGhostNotes();
-  
   save();selectedKey='';render();
   showToast(parsed.lots.length+' lotes e '+int(sum(parsed.lots,'quantity'))+' animais atualizados. As anotações foram preservadas.');
 }
@@ -249,7 +247,6 @@ function kpi(label,value,sub,cls,action){var tag=action?'button':'div';return '<
 function kpiProgress(label,value,sub,pct,cls){return '<div class="kpi"><span>'+label+'</span><strong>'+value+'</strong><div class="kpi-progress"><div class="kpi-bar '+(cls||'')+'" style="width:'+Math.min(100,pct)+'%"></div></div><small>'+sub+'</small></div>';}
 function filtered(){var q=norm(el('searchFilter').value),line=el('lineFilter').value,diet=el('dietFilter').value,type=el('typeFilter').value,note=el('noteFilter').value,sanidadeF=el('sanidadeFilter').value,deathsF=el('deathsFilter').value,min=inputNumber(el('consMin').value),max=inputNumber(el('consMax').value),daysMin=inputNumber(el('daysMin').value),daysMax=inputNumber(el('daysMax').value),shipmentDate=el('shipmentDateFilter').value,sanidadeSet={};state.sanidadeLog.forEach(function(o){sanidadeSet[o.lotKey]=true;});return state.lots.filter(function(l){var notes=activeNotes(l).length,search=!q||norm(l.name+' '+l.pen+' '+l.line+' '+l.category+' '+l.proprietario).indexOf(q)>=0,shipment=shipmentFor(l),hasSanidade=!!sanidadeSet[lotKey(l)],hasDeaths=Number(l.deaths)>0;return search&&(!line||l.line===line)&&(!diet||norm(l.diet)===diet)&&(!type||l.type===type)&&(!note||(note==='active'?notes>0:notes===0))&&(!sanidadeF||(sanidadeF==='com'?hasSanidade:!hasSanidade))&&(!deathsF||(deathsF==='com'?hasDeaths:!hasDeaths))&&(min===null||l.pv>=min)&&(max===null||l.pv<=max)&&(daysMin===null||l.days>=daysMin)&&(daysMax===null||l.days<=daysMax)&&(!shipmentDate||(shipmentDate==='none'?!shipment:!!shipment&&shipment.shipmentDate===shipmentDate));});}
 function fillFilters(){var line=el('lineFilter').value,diet=el('dietFilter').value,block=el('blockFilter').value,shipmentDate=el('shipmentDateFilter').value,lines=Array.from(new Set(state.lots.map(function(l){return l.line;}))).filter(Boolean).sort(),diets=Array.from(new Set(state.lots.map(function(l){return norm(l.diet);}))).filter(Boolean).sort(),shipDates=Array.from(new Set((state.shipmentPlans||[]).map(function(p){return p.shipmentDate;}))).filter(Boolean).sort();el('lineFilter').innerHTML='<option value="">Todas</option>'+lines.map(function(x){return '<option value="'+x+'">Linha '+x+'</option>';}).join('');el('dietFilter').innerHTML='<option value="">Todas</option>'+diets.map(function(x){return '<option value="'+esc(x)+'">'+esc(x)+'</option>';}).join('');el('blockFilter').innerHTML='<option value="">Todos</option>'+state.penBlocks.map(function(b){return '<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>';}).join('');el('shipmentDateFilter').innerHTML='<option value="">Todas</option><option value="none">Sem programação</option>'+shipDates.map(function(d){return '<option value="'+d+'">'+dateBr(d)+'</option>';}).join('');el('lineFilter').value=line;el('dietFilter').value=diet;el('blockFilter').value=block;el('shipmentDateFilter').value=shipmentDate;}
-
 function render(){fillFilters();var rows=filtered(),term=state.lots.filter(function(l){return norm(l.diet)==='TERMINACAO';}),termLow=term.filter(function(l){return l.pv<1.8;}),notes=state.notes.filter(function(n){return n.status==='active';}),lotsWithDeaths=state.lots.filter(function(l){return Number(l.deaths)>0;});el('positionLabel').textContent=state.reportDate?'Posição em '+dateBr(state.reportDate)+' · atualizado '+new Date(state.importedAt).toLocaleString('pt-BR'):'Nenhum relatório importado';
   var fullMap=buildPenMap(state.lots),allPens=[];
   state.penBlocks.forEach(function(block){block.lines.forEach(function(line){for(var n=1;n<=10;n++){var num=pad2(n),key=line+num;allPens.push(fullMap[key]||{line:line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}});}});});
@@ -258,7 +255,6 @@ function render(){fillFilters();var rows=filtered(),term=state.lots.filter(funct
   var occPct = totalCap > 0 ? (animalsHoused / totalCap * 100) : 0;
   el('summary').innerHTML=kpiProgress('Ocupação Física',int(animalsHoused)+' cab.',occupied.length+' currais ocupados',occPct,'wine')+kpi('Capacidade livre',int(empty*CAPACITY_PEN),empty+' currais vazios × '+CAPACITY_PEN,'gold')+kpi('Vagas após embarques',int((empty+plannedVacant.length)*CAPACITY_PEN),plannedVacant.length+' currais com saída total programada','green')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue')+kpi('Consumo < 1,8% (term.)',int(sum(termLow,'quantity')),'animais em terminação para observar','red','cons-low')+kpi('Mortes',int(sum(state.lots,'deaths')),lotsWithDeaths.length+' lote'+(lotsWithDeaths.length===1?'':'s')+' com registro','red','deaths')+kpi('Anotações ativas',int(notes.length),'acompanhamentos pendentes','blue','notes-active');
   el('resultCount').textContent=rows.length+' '+(rows.length===1?'curral':'currais');el('resultAnimals').textContent=int(sum(rows,'quantity'))+' animais';renderPenLegend();renderShipmentSchedule();renderSanidadeRecent();renderSanidadeReport();renderPenMap(rows);updatePenSelectionBar();}
-
 function penNumber(l){var m=String(l.pen||'').match(/(\d{1,2})\s*$/);return m?m[1].padStart(2,'0'):'';}
 function hasActiveFilters(){return !!(el('searchFilter').value.trim()||el('dietFilter').value||el('typeFilter').value||el('noteFilter').value||el('sanidadeFilter').value||el('deathsFilter').value||el('consMin').value.trim()||el('consMax').value.trim()||el('daysMin').value.trim()||el('daysMax').value.trim()||el('shipmentDateFilter').value);}
 function buildPenMap(rows){var map={};rows.forEach(function(l){var num=penNumber(l);if(!num)return;var key=l.line+num;if(!map[key])map[key]={line:l.line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}};map[key].lots.push(l);map[key].quantity+=Number(l.quantity)||0;map[key].types[l.type]=(map[key].types[l.type]||0)+(Number(l.quantity)||0);});return map;}
@@ -293,7 +289,8 @@ function renderPenMapCompact(rows){
         var num=pad2(n),key=line+num,pen=map[key]||{line:line,number:num,lots:[],quantity:0,types:{own:0,boitel:0,partnership:0}};
         var noteF=el('noteFilter').value, q=norm(el('searchFilter').value);
         var hasPenNote=state.notes.some(function(x){return x.status==='active'&&x.scope==='pen'&&x.targetKey===key;});
-        var status=penStatus(pen),contentMatch=!filtersActive||pen.quantity>0||(noteF==='active'&&hasPenNote)||(q&&key.indexOf(q)>=0),statusMatch=!statusSel||status===statusSel;       cells.push(contentMatch&&statusMatch?penCompactCell(pen):'<div class="compact-cell compact-hidden"></div>');
+        var status=penStatus(pen),contentMatch=!filtersActive||pen.quantity>0||(noteF==='active'&&hasPenNote)||(q&&key.indexOf(q)>=0),statusMatch=!statusSel||status===statusSel;
+        cells.push(contentMatch&&statusMatch?penCompactCell(pen):'<div class="compact-cell compact-hidden"></div>');
       }
       return '<div class="compact-line"><span class="compact-line-label">'+line+'</span><div class="compact-row">'+cells.join('')+'</div></div>';
     }).join('');
@@ -492,16 +489,47 @@ function mergeSanidadeCategories(current,incoming){return mergeCodedList(current
 function mergeSanidadeMeds(current,incoming){return mergeCodedList(current,incoming,defaultSanidadeMeds());}
 function mergeSanidadeCauses(current,incoming){return mergeCodedList(current,incoming,defaultSanidadeCauses());}
 function mergeSanidadeRounds(current,incoming){var seen={};(current||[]).forEach(function(r){seen[r.penCode+'|'+r.date]=r;});(incoming||[]).forEach(function(r){var k=r.penCode+'|'+r.date;if(!seen[k])seen[k]=r;});return Object.keys(seen).map(function(k){return seen[k];});}
+
 async function restore(file){
   try{
     var d=JSON.parse(await file.text()),s=d.state||d;
     if(!Array.isArray(s.lots)||!Array.isArray(s.notes))throw new Error();
-    var incomingNewer=!!s.importedAt&&(!state.importedAt||s.importedAt>state.importedAt),mergedNotes=mergeNotes(state.notes,s.notes),addedNotes=mergedNotes.length-state.notes.length,mergedPlans=mergePlans(state.shipmentPlans,s.shipmentPlans),mergedSanidadeLog=mergeSanidadeLog(state.sanidadeLog,s.sanidadeLog),addedSanidade=mergedSanidadeLog.length-state.sanidadeLog.length,mergedSanidadeCategories=mergeSanidadeCategories(state.sanidadeCategories,s.sanidadeCategories),mergedSanidadeMeds=mergeSanidadeMeds(state.sanidadeMeds,s.sanidadeMeds),mergedSanidadeCauses=mergeSanidadeCauses(state.sanidadeCauses,s.sanidadeCauses),mergedSanidadeRounds=mergeSanidadeRounds(state.sanidadeRounds,s.sanidadeRounds);
-    if(!confirm('Mesclar esta cópia com os dados deste aparelho?\n'+(incomingNewer?'A posição de lotes será atualizada para a mais recente (do arquivo importado).':'A posição de lotes deste aparelho já é a mais recente e será mantida.')+'\nAs anotações, as programações de abate e a sanidade dos dois arquivos serão combinadas, sem duplicar e sem apagar nada.'))return;
-    state=Object.assign(defaults(),{version:state.version,lots:incomingNewer?s.lots:state.lots,reportDate:incomingNewer?s.reportDate:state.reportDate,importedAt:incomingNewer?s.importedAt:state.importedAt,notes:mergedNotes,penBlocks:state.penBlocks,shipmentPlans:mergedPlans,sanidadeLog:mergedSanidadeLog,sanidadeCategories:mergedSanidadeCategories,sanidadeMeds:mergedSanidadeMeds,sanidadeCauses:mergedSanidadeCauses,sanidadeRounds:mergedSanidadeRounds});
-    clearUnsaved();save();render();showToast('Cópia mesclada'+(addedNotes>0?': '+addedNotes+' anotação(ões) nova(s)':'')+(addedSanidade>0?(addedNotes>0?', ':': ')+addedSanidade+' ocorrência(s) de sanidade nova(s)':'')+'.');
+    
+    var mergedNotes=mergeNotes(state.notes,s.notes),
+        addedNotes=mergedNotes.length-state.notes.length,
+        mergedPlans=mergePlans(state.shipmentPlans,s.shipmentPlans),
+        mergedSanidadeLog=mergeSanidadeLog(state.sanidadeLog,s.sanidadeLog),
+        addedSanidade=mergedSanidadeLog.length-state.sanidadeLog.length,
+        mergedSanidadeCategories=mergeSanidadeCategories(state.sanidadeCategories,s.sanidadeCategories),
+        mergedSanidadeMeds=mergeSanidadeMeds(state.sanidadeMeds,s.sanidadeMeds),
+        mergedSanidadeCauses=mergeSanidadeCauses(state.sanidadeCauses,s.sanidadeCauses),
+        mergedSanidadeRounds=mergeSanidadeRounds(state.sanidadeRounds,s.sanidadeRounds);
+
+    if(!confirm('Restaurar os dados deste arquivo?\n\nA posição dos currais será SEMPRE atualizada com os dados deste arquivo (substituindo a atual), mas o seu histórico de sanidade e as anotações serão combinados sem apagar nada.'))return;
+
+    // Força SEMPRE a atualização dos lotes (s.lots), limpando a regra anterior da data
+    state=Object.assign(defaults(),{
+        version:state.version,
+        lots:s.lots,
+        reportDate:s.reportDate,
+        importedAt:s.importedAt,
+        notes:mergedNotes,
+        penBlocks:state.penBlocks,
+        shipmentPlans:mergedPlans,
+        sanidadeLog:mergedSanidadeLog,
+        sanidadeCategories:mergedSanidadeCategories,
+        sanidadeMeds:mergedSanidadeMeds,
+        sanidadeCauses:mergedSanidadeCauses,
+        sanidadeRounds:mergedSanidadeRounds
+    });
+    
+    cleanupGhostNotes(); // Garante que, ao mudar os lotes, limpa as anotações fantasmas antigas
+    
+    clearUnsaved();save();render();
+    showToast('Cópia mesclada e currais atualizados com sucesso!');
   }catch(e){showToast('Arquivo de cópia inválido.');}
 }
+
 function bind(){
   el('importBtn').onclick=function(){el('excelInput').click();};
   el('excelInput').onchange=async function(){var f=this.files&&this.files[0];if(!f)return;try{await importExcel(f);}catch(e){console.error(e);showToast(e.message||'Não foi possível importar a planilha.');}finally{this.value='';}};
