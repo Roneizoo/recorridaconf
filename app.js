@@ -149,6 +149,7 @@ function parseExcelRows(rows){
   });
   return {lots:out,reportDate:reportDate};
 }
+function todayIsoLocal(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
 async function importExcel(file){
   showToast('Lendo a planilha de lotes ativos...');
   var XLSXLib=window.XLSX;if(!XLSXLib)throw new Error('Leitor de planilha indisponível.');
@@ -158,8 +159,15 @@ async function importExcel(file){
   if(!rows.length)throw new Error('A planilha está vazia.');
   var headerKeys=Object.keys(rows[0]).map(norm);
   if(headerKeys.indexOf('LINHA')<0||headerKeys.indexOf('LOTE')<0)throw new Error('Use a planilha de Lotes Ativos exportada pelo Bovino.OS, com as colunas Linha e Lote.');
+  // Só aceita o relatório completo (todas as colunas marcadas no Bovino.OS). Sem "1ª Entrada" a chave dos lotes muda
+  // e as anotações ativas seriam encerradas como órfãs; sem as demais colunas o app mostraria dados zerados.
+  var REQUIRED=['Curral','Cab.','Mortes','Dieta','1ª Entrada','D. conf.','D. trato','GMD','Peso Est.','kg/cab (MS)','kg/cab (MN)','%PV (MS)'],
+      missing=REQUIRED.filter(function(c){return headerKeys.indexOf(norm(c))<0;});
+  if(missing.length)throw new Error('Relatório incompleto — faltam as colunas: '+missing.join(', ')+'. No Bovino.OS marque "Todos" em Colunas e exporte de novo. Nada foi alterado.');
   var parsed=parseExcelRows(rows);
   if(!parsed.lots.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido na planilha.');
+  // Data da posição = data do nome do arquivo (Lotes_Ativos_AAAA-MM-DD). A data dentro da coluna Dieta é a entrada na dieta, não a do relatório.
+  var fm=String(file.name||'').match(/(\d{4})-(\d{2})-(\d{2})/);parsed.reportDate=fm?fm[1]+'-'+fm[2]+'-'+fm[3]:todayIsoLocal();
   state.lots=parsed.lots;state.reportDate=parsed.reportDate;state.importedAt=new Date().toISOString();
   cleanupGhostNotes();
   save();selectedKey='';render();
